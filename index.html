@@ -195,7 +195,83 @@
     .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
     .modal h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 20px; }
 
-    /* ── Scrollbar ── */
+    /* ── Outfit gallery timeline ── */
+    .tl-gallery-day { position: relative; padding-left: 28px; padding-bottom: 20px; border-left: 2px solid var(--border); margin-left: 6px; }
+    .tl-gallery-day:last-child { border-left: 2px solid transparent; }
+    .tl-day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .tl-day-label { display: flex; align-items: center; gap: 8px; }
+    .tl-day-dot { width: 12px; height: 12px; border-radius: 50%; position: absolute; left: -7px; top: 2px; }
+    .tl-day-dot.filled { background: var(--brand); box-shadow: 0 0 0 3px var(--brand-light); }
+    .tl-day-dot.empty { background: var(--surface); border: 2px solid var(--border); }
+    .tl-day-name { font-size: 13px; font-weight: 500; color: var(--ink-mid); }
+    .tl-weather-pill { font-size: 12px; background: var(--surface-2); border-radius: 100px; padding: 3px 10px; color: var(--ink-light); }
+
+    .tl-gallery-row { display: flex; gap: 10px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .tl-gallery-row::-webkit-scrollbar { display: none; }
+
+    .tl-gallery-thumb { width: 110px; height: 140px; border-radius: 12px; flex-shrink: 0; position: relative; overflow: hidden; cursor: pointer; }
+
+    .tl-gallery-thumb.planned { box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+    .tl-thumb-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .tl-thumb-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%); padding: 10px 8px 8px; border-radius: 0 0 12px 12px; }
+    .tl-thumb-name { font-size: 11px; font-weight: 600; color: white; margin-bottom: 5px; }
+    .tl-thumb-members { display: flex; gap: 3px; }
+    .mpip { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); color: white; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.4); }
+    .tl-thumb-edit { position: absolute; top: 7px; right: 7px; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); border: none; border-radius: 6px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+    .tl-gallery-thumb.planned:hover .tl-thumb-edit { opacity: 1; }
+
+    .tl-gallery-thumb.add { width: 80px; height: 140px; border: 2px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--ink-light); font-size: 11px; font-weight: 500; transition: all 0.2s; background: var(--surface-2); }
+    .tl-gallery-thumb.add:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+    .tl-gallery-thumb.add-primary { width: 100%; height: 80px; border: 2px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-light); font-size: 13px; font-weight: 500; transition: all 0.2s; background: var(--surface-2); }
+    .tl-gallery-thumb.add-primary:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+
+    .pack-category { margin: 0 16px 10px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .cat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--surface); transition: background 0.15s; }
+    .cat-header:hover { background: var(--surface-2); }
+    .cat-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .cat-mini-bar { width: 48px; height: 5px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
+    .cat-mini-fill { height: 100%; background: var(--brand); border-radius: 100px; transition: width 0.4s; }
+    .cat-chevron { transition: transform 0.25s; color: var(--ink-light); }
+    .pack-category.collapsed .cat-chevron { transform: rotate(-90deg); }
+    .cat-items { border-top: 1px solid var(--border); }
+    .pack-category.collapsed .cat-items { display: none; }
+
+    .pack-item { position: relative; overflow: hidden; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .pack-item:last-child { border-bottom: none; }
+    .pack-item-inner { display: flex; align-items: center; gap: 12px; padding: 13px 16px; position: relative; z-index: 2; background: var(--surface); transition: transform 0.25s ease; }
+    .pack-item.swiped .pack-item-inner { transform: translateX(-72px); }
+    .swipe-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 64px; background: #e84040; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; z-index: 1; }
+
+    .pack-check { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+    .pack-check svg { display: none; width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+    .pack-item.checked .pack-check { background: var(--brand); border-color: var(--brand); }
+    .pack-item.checked .pack-check svg { display: block; }
+    .pack-label { flex: 1; font-size: 15px; transition: all 0.2s; }
+    .pack-item.checked .pack-label { text-decoration: line-through; color: var(--ink-light); }
+
+    .remind-btn { background: none; border: none; padding: 4px; cursor: pointer; color: var(--ink-light); display: flex; align-items: center; border-radius: 6px; transition: all 0.2s; }
+    .remind-btn:hover { background: var(--brand-light); color: var(--brand); }
+    .remind-btn.active { color: var(--brand); }
+
+    /* ── Pre-departure modal ── */
+    .predep-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .predep-item:last-child { border-bottom: none; }
+    .predep-check { width: 26px; height: 26px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+    .predep-check svg { display: none; width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+    .predep-item.checked .predep-check { background: #2d7a4f; border-color: #2d7a4f; }
+    .predep-item.checked .predep-check svg { display: block; }
+    .predep-item.checked .predep-label { text-decoration: line-through; color: var(--ink-light); }
+    .predep-label { flex: 1; font-size: 15px; }
+    .predep-time { font-size: 11px; color: var(--brand); font-weight: 500; background: var(--brand-light); padding: 3px 8px; border-radius: 100px; white-space: nowrap; }
+
+
+    /* ── Climate summary ── */
+    .climate-stat { flex: 1; min-width: 60px; text-align: center; background: var(--surface); border-radius: var(--radius-sm); padding: 10px 8px; border: 1px solid var(--border); }
+    .climate-val { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--brand); line-height: 1; }
+    .climate-lbl { font-size: 11px; color: var(--ink-light); margin-top: 4px; font-weight: 500; }
+
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -227,9 +303,8 @@
     </div>
 
     <div class="home-banner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <div>
-        <h3>Welcome back</h3>
+        <h3>Welcome back, Sarah 👋</h3>
         <p>Your next trip is in 12 days — let's get packing!</p>
       </div>
     </div>
@@ -262,17 +337,39 @@
     </div>
 
     <div class="section-head" style="margin-top:8px;">
-      <h2>Today's weather</h2>
+      <h2>Barcelona weather</h2>
+      <a style="font-size:12px; color:var(--ink-light);" id="weather-label">Loading...</a>
     </div>
-    <div class="weather-strip">
-      <div class="weather-day today"><div class="wd">Today</div><div class="wi">☀️</div><div class="wt">28°</div></div>
-      <div class="weather-day"><div class="wd">Tue</div><div class="wi">⛅</div><div class="wt">25°</div></div>
-      <div class="weather-day"><div class="wd">Wed</div><div class="wi">☀️</div><div class="wt">29°</div></div>
-      <div class="weather-day"><div class="wd">Thu</div><div class="wi">🌤️</div><div class="wt">27°</div></div>
-      <div class="weather-day"><div class="wd">Fri</div><div class="wi">⛅</div><div class="wt">24°</div></div>
-      <div class="weather-day"><div class="wd">Sat</div><div class="wi">🌧️</div><div class="wt">21°</div></div>
-      <div class="weather-day"><div class="wd">Sun</div><div class="wi">☀️</div><div class="wt">26°</div></div>
+
+    <!-- Forecast strip (shows when trip is within 16 days) -->
+    <div id="weather-forecast-block">
+      <div class="weather-strip" id="weather-strip">
+        <div class="weather-day today" style="opacity:0.4;">
+          <div class="wd">—</div><div class="wi" style="font-size:13px;">…</div><div class="wt">—</div>
+        </div>
+      </div>
     </div>
+
+    <!-- Climate summary card -->
+    <div id="weather-climate-card" style="margin: 8px 16px 0; padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); display:none;">
+      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;">July in Barcelona — typical climate</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="climate-stat"><div class="climate-val" id="clim-high">—</div><div class="climate-lbl">Avg high</div></div>
+        <div class="climate-stat"><div class="climate-val" id="clim-low">—</div><div class="climate-lbl">Avg low</div></div>
+        <div class="climate-stat"><div class="climate-val" id="clim-rain">—</div><div class="climate-lbl">Rain days</div></div>
+        <div class="climate-stat"><div class="climate-val" id="clim-sun">—</div><div class="climate-lbl">Sun hours</div></div>
+      </div>
+      <div id="clim-advice" style="margin-top:12px; font-size:13px; color:var(--ink-mid); line-height:1.6; padding:10px 12px; background:var(--brand-light); border-radius:var(--radius-sm);"></div>
+    </div>
+
+    <!-- Packing advice based on weather -->
+    <div id="weather-pack-tip" style="margin: 8px 16px 0; display:none;">
+      <div style="display:flex; align-items:start; gap:10px; padding:12px 14px; background:#fef3e2; border-radius:var(--radius-sm); border:1px solid #fde5b5;">
+        <span style="font-size:18px;">🧳</span>
+        <div style="font-size:13px; color:#7a4a0a; line-height:1.5;" id="pack-tip-text"></div>
+      </div>
+    </div>
+
 
     <div style="height:8px;"></div>
     <div class="premium-banner">
@@ -315,48 +412,132 @@
       <span class="tag tag-amber">⏳ Packing 68%</span>
     </div>
 
+    <!-- Packing progress -->
     <div class="section-head">
       <h2>Packing list</h2>
-      <a>Edit</a>
+      <a onclick="openModal('modal-predeparture')">Pre-departure ✈️</a>
     </div>
-    <div class="card">
-      <div style="font-size:12px;font-weight:500;color:var(--ink-light);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;">Clothing</div>
-      <div class="check-item checked" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">7× T-shirts</span>
+    <div style="padding: 0 16px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <span style="font-size:13px; color:var(--ink-mid);" id="pack-summary">6 of 9 packed</span>
+        <span style="font-size:13px; font-weight:500; color:var(--brand);" id="pack-pct">68%</span>
       </div>
-      <div class="check-item checked" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">3× Shorts</span>
-      </div>
-      <div class="check-item" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">1× Smart dress</span>
-      </div>
-      <div class="check-item" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">Swimwear</span>
-      </div>
-      <div class="divider" style="margin:12px 0;"></div>
-      <div style="font-size:12px;font-weight:500;color:var(--ink-light);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;">Essentials</div>
-      <div class="check-item checked" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">Passports</span>
-      </div>
-      <div class="check-item checked" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">Travel insurance docs</span>
-      </div>
-      <div class="check-item" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">Phone chargers</span>
-      </div>
-      <div class="check-item" onclick="toggleCheck(this)">
-        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-        <span class="check-label">Sunscreen SPF50</span>
+      <div style="height:8px; background:var(--surface-3); border-radius:100px; overflow:hidden;">
+        <div id="pack-bar" style="height:100%; width:68%; background: linear-gradient(90deg, var(--brand), #6db3d8); border-radius:100px; transition: width 0.4s ease;"></div>
       </div>
     </div>
-    <div style="padding: 0 16px 8px;">
+
+    <!-- Category: Clothing -->
+    <div class="pack-category" id="cat-clothing">
+      <div class="cat-header" onclick="toggleCategory('cat-clothing')">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="cat-icon" style="background:#e8f2f9;">👕</div>
+          <div>
+            <div style="font-size:15px; font-weight:500;">Clothing</div>
+            <div style="font-size:12px; color:var(--ink-light);" id="cat-clothing-count">2 of 4 packed</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:50%;"></div></div>
+          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="cat-items">
+        <div class="pack-item checked" data-id="1" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">7× T-shirts</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item checked" data-id="2" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">3× Shorts</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="3" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">1× Smart dress</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="4" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Swimwear</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Essentials -->
+    <div class="pack-category" id="cat-essentials">
+      <div class="cat-header" onclick="toggleCategory('cat-essentials')">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="cat-icon" style="background:#e8f5ee;"></div>
+          <div>
+            <div style="font-size:15px; font-weight:500;">Essentials</div>
+            <div style="font-size:12px; color:var(--ink-light);" id="cat-essentials-count">2 of 4 packed</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:50%;"></div></div>
+          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="cat-items">
+        <div class="pack-item checked" data-id="5" data-reminder="true">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Passports</span>
+            <button class="remind-btn active" onclick="openReminderModal(this)" title="Reminder set"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item checked" data-id="6" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Travel insurance docs</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="7" data-reminder="true">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Phone chargers</span>
+            <button class="remind-btn active" onclick="openReminderModal(this)" title="Reminder set"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="8" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Sunscreen SPF50</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="9" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Kids' medications</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 12px 16px 8px;">
       <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-item')">+ Add item</button>
     </div>
   </div>
@@ -372,49 +553,192 @@
       </button>
     </div>
 
-    <div style="padding: 16px 16px 8px; display:flex; gap:8px; flex-wrap:wrap;">
-      <span class="tag tag-blue">Barcelona · 7 days</span>
-      <span class="tag tag-green">3 outfits planned</span>
+    <!-- Trip strip -->
+    <div style="padding: 14px 16px 4px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-family:var(--font-display); font-size:19px; font-weight:600;">Barcelona</div>
+        <div style="font-size:12px; color:var(--ink-light); margin-top:1px;">14 – 21 July · 7 days</div>
+      </div>
+      <span class="tag tag-green">3 of 7 planned</span>
     </div>
 
-    <div class="outfit-grid">
-      <div class="outfit-card">
-        <div class="outfit-img" style="background: linear-gradient(135deg, #e8f2f9, #c5dff0);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+    <!-- Timeline gallery -->
+    <div style="padding: 12px 16px 8px; display:flex; flex-direction:column; gap:0;">
+
+      <!-- Day 1 — fully populated, multiple outfits per person -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Mon 14 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 28°</span>
         </div>
-        <div class="outfit-info"><div class="day">Day 1 — Mon</div><div class="name">Arrival look</div></div>
-      </div>
-      <div class="outfit-card">
-        <div class="outfit-img" style="background: linear-gradient(135deg, #fef3e2, #fde5b5);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+        <div class="tl-gallery-row">
+          <!-- Sarah's outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <!-- James's outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">James</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">J</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <!-- Kids outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Kids</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">O</span><span class="mpip" style="background:rgba(74,127,165,0.8);">L</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
         </div>
-        <div class="outfit-info"><div class="day">Day 2 — Tue</div><div class="name">Beach day</div></div>
       </div>
-      <div class="outfit-card">
-        <div class="outfit-img" style="background: linear-gradient(135deg, #e8f5ee, #c5e8d4);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+
+      <!-- Day 2 — fully populated -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Tue 15 Jul</span>
+          </div>
+          <span class="tl-weather-pill">⛅ 25°</span>
         </div>
-        <div class="outfit-info"><div class="day">Day 3 — Wed</div><div class="name">Sightseeing</div></div>
-      </div>
-      <div class="outfit-card" onclick="openModal('modal-add-outfit')" style="border-style:dashed;">
-        <div class="outfit-img" style="background: var(--surface-2);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1509631179647-0177331693ae?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">James</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">J</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
         </div>
-        <div class="outfit-info"><div class="day">Add outfit</div><div class="name" style="color:var(--ink-light)">Tap to upload</div></div>
       </div>
+
+      <!-- Day 3 — one outfit -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Wed 16 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 29°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 4 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Thu 17 Jul</span>
+          </div>
+          <span class="tl-weather-pill">🌤️ 27°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 5 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Fri 18 Jul</span>
+          </div>
+          <span class="tl-weather-pill">⛅ 24°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 6 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Sat 19 Jul</span>
+          </div>
+          <span class="tl-weather-pill">🌧️ 21°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 7 — empty, last -->
+      <div class="tl-gallery-day" style="border-left: 2px solid transparent;">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Sun 20 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 26°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div style="height:12px;"></div>
-    <div class="premium-banner">
-      <div class="text">
-        <h4>Outfit archive</h4>
-        <p>Save looks from past trips</p>
-      </div>
+    <div class="premium-banner" style="margin-top:4px;">
+      <div class="text"><h4>Outfit archive</h4><p>Save looks from past trips</p></div>
       <button class="btn-gold">Premium</button>
     </div>
   </div>
 
-  <!-- ══ WELLNESS SCREEN ══ -->
+
+    <!-- ══ WELLNESS SCREEN ══ -->
   <div class="screen" id="screen-wellness">
     <div class="app-header">
       <div class="header-logo">
@@ -533,7 +857,7 @@
       <div class="nav-dot"></div>
     </button>
     <button class="nav-item" id="nav-trips" onclick="switchScreen('trips')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
       <span>Trips</span>
       <div class="nav-dot"></div>
     </button>
@@ -665,6 +989,69 @@
     </div>
   </div>
 
+  <!-- Set Reminder Modal -->
+  <div class="modal-overlay" id="modal-reminder" onclick="closeModal(event, 'modal-reminder')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Set reminder</h3>
+      <p style="font-size:14px; color:var(--ink-mid); margin-bottom:20px; margin-top:-10px;">You'll get a notification to check this item is packed before you leave.</p>
+      <div class="field">
+        <label>Item</label>
+        <input type="text" id="reminder-item-name" readonly style="background:var(--surface-2); color:var(--ink-mid);"/>
+      </div>
+      <div class="field">
+        <label>Remind me</label>
+        <select id="reminder-timing">
+          <option>2 hours before departure</option>
+          <option>4 hours before departure</option>
+          <option>The evening before</option>
+          <option>Morning of departure</option>
+          <option>1 day before</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Departure time</label>
+        <input type="time" value="10:30"/>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveReminder()">Set reminder 🔔</button>
+    </div>
+  </div>
+
+  <!-- Pre-departure Modal -->
+  <div class="modal-overlay" id="modal-predeparture" onclick="closeModal(event, 'modal-predeparture')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <h3 style="margin-bottom:0;">Pre-departure ✈️</h3>
+        <span class="tag tag-amber">Flight 10:30 AM</span>
+      </div>
+      <p style="font-size:13px; color:var(--ink-mid); margin-bottom:20px;">Double-check these items before you leave the house.</p>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Passports</span>
+        <span class="predep-time">2h before</span>
+      </div>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Phone chargers</span>
+        <span class="predep-time">2h before</span>
+      </div>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Kids' medications</span>
+        <span class="predep-time">Evening before</span>
+      </div>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Travel insurance docs</span>
+        <span class="predep-time">Morning of</span>
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary btn-full" onclick="closeModalById('modal-predeparture')">All checked — let's go! 🚀</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Settings -->
   <div class="modal-overlay" id="modal-settings" onclick="closeModal(event, 'modal-settings')">
     <div class="modal" onclick="event.stopPropagation()">
@@ -697,6 +1084,223 @@
 </div>
 
 <script>
+  // ── Packing list logic ──
+  function packToggle(checkEl) {
+    const item = checkEl.closest('.pack-item');
+    item.classList.toggle('checked');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.pack-item');
+    const checked = document.querySelectorAll('.pack-item.checked');
+    const pct = Math.round((checked.length / all.length) * 100);
+    const bar = document.getElementById('pack-bar');
+    const pctEl = document.getElementById('pack-pct');
+    const sumEl = document.getElementById('pack-summary');
+    if (bar) bar.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (sumEl) sumEl.textContent = checked.length + ' of ' + all.length + ' packed';
+  }
+
+  function toggleCategory(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+  }
+
+  // Swipe to delete
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const item = e.target.closest('.pack-item');
+    if (!item) return;
+    if (dx < -50) item.classList.add('swiped');
+    if (dx > 20) item.classList.remove('swiped');
+  });
+  // Also allow click-to-reveal delete on desktop
+  document.querySelectorAll && document.addEventListener('click', e => {
+    if (!e.target.closest('.pack-item')) {
+      document.querySelectorAll('.pack-item.swiped').forEach(i => i.classList.remove('swiped'));
+    }
+  });
+
+  function deletePackItem(btn) {
+    const item = btn.closest('.pack-item');
+    item.style.transition = 'opacity 0.3s, max-height 0.3s';
+    item.style.opacity = '0';
+    item.style.maxHeight = '0';
+    item.style.overflow = 'hidden';
+    setTimeout(() => { item.remove(); updateProgress(); }, 320);
+  }
+
+  // Reminder modal
+  let _reminderBtn = null;
+  function openReminderModal(btn) {
+    _reminderBtn = btn;
+    const label = btn.closest('.pack-item-inner').querySelector('.pack-label').textContent;
+    document.getElementById('reminder-item-name').value = label;
+    openModal('modal-reminder');
+  }
+
+  function saveReminder() {
+    if (_reminderBtn) {
+      _reminderBtn.classList.add('active');
+      _reminderBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+      _reminderBtn.closest('.pack-item').dataset.reminder = 'true';
+    }
+    closeModalById('modal-reminder');
+  }
+
+  // ── Live weather (Open-Meteo, no API key needed) ──
+  const TRIP = {
+    name: 'Barcelona',
+    lat: 41.3851,
+    lon: 2.1734,
+    startDate: new Date('2025-07-14'),
+    endDate: new Date('2025-07-21')
+  };
+
+  const WMO = {
+    0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
+    45:'🌫️', 48:'🌫️',
+    51:'🌦️', 53:'🌦️', 55:'🌧️',
+    61:'🌧️', 63:'🌧️', 65:'🌧️',
+    71:'🌨️', 73:'🌨️', 75:'🌨️',
+    80:'🌦️', 81:'🌧️', 82:'⛈️',
+    95:'⛈️', 96:'⛈️', 99:'⛈️'
+  };
+
+  // Climate averages by month for Barcelona (0=Jan ... 11=Dec)
+  const BARCELONA_CLIMATE = [
+    { high: 13, low: 6,  rain: 5,  sun: 5,  advice: 'Cool and mild. Pack layers, a light jacket and an umbrella.' },
+    { high: 14, low: 7,  rain: 4,  sun: 6,  advice: 'Still cool. Jeans, light jumper and a waterproof layer.' },
+    { high: 17, low: 9,  rain: 5,  sun: 6,  advice: 'Mild spring weather. Light layers and a jacket for evenings.' },
+    { high: 20, low: 12, rain: 6,  sun: 7,  advice: 'Warm days, cool evenings. Mix of light clothes and a cardigan.' },
+    { high: 24, low: 16, rain: 5,  sun: 8,  advice: 'Warm and pleasant. Light summer clothes, sunscreen essential.' },
+    { high: 28, low: 20, rain: 3,  sun: 9,  advice: 'Hot and sunny. Breathable fabrics, sunscreen SPF50, sunglasses.' },
+    { high: 31, low: 23, rain: 2,  sun: 10, advice: 'Peak summer heat. Light cotton, swimwear, sun hat, SPF50 a must.' },
+    { high: 31, low: 23, rain: 3,  sun: 9,  advice: 'Very hot. Same as July — pack light, breathable and UV protection.' },
+    { high: 27, low: 20, rain: 5,  sun: 7,  advice: 'Warm but cooler evenings. Add a light layer for after sunset.' },
+    { high: 22, low: 16, rain: 7,  sun: 6,  advice: 'Mild autumn. A mix of T-shirts and a waterproof jacket.' },
+    { high: 17, low: 11, rain: 6,  sun: 5,  advice: 'Cooler and wetter. Layers, waterproof jacket recommended.' },
+    { high: 14, low: 7,  rain: 5,  sun: 4,  advice: 'Cool winter. Warm coat, scarf and layers for sightseeing.' }
+  ];
+
+  const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  async function fetchWeather() {
+    const today = new Date();
+    const tripStart = TRIP.startDate;
+    const daysUntilTrip = Math.ceil((tripStart - today) / (1000 * 60 * 60 * 24));
+    const tripMonth = tripStart.getMonth();
+    const climate = BARCELONA_CLIMATE[tripMonth];
+    const monthName = tripStart.toLocaleString('default', { month: 'long' });
+
+    // Always show climate summary
+    document.getElementById('weather-climate-card').style.display = 'block';
+    document.getElementById('clim-high').textContent = climate.high + '°';
+    document.getElementById('clim-low').textContent = climate.low + '°';
+    document.getElementById('clim-rain').textContent = climate.rain;
+    document.getElementById('clim-sun').textContent = climate.sun + 'h';
+    document.getElementById('clim-advice').textContent = climate.advice;
+
+    // Show packing tip
+    document.getElementById('weather-pack-tip').style.display = 'block';
+    document.getElementById('pack-tip-text').textContent = `Based on ${monthName} averages: ${climate.advice}`;
+
+    // If trip is within 16 days, fetch real forecast
+    if (daysUntilTrip <= 16 && daysUntilTrip >= 0) {
+      document.getElementById('weather-label').textContent = 'Trip forecast';
+      try {
+        const endStr = TRIP.endDate.toISOString().split('T')[0];
+        const startStr = TRIP.startDate.toISOString().split('T')[0];
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.lat}&longitude=${TRIP.lon}&daily=weathercode,temperature_2m_max&timezone=auto&start_date=${startStr}&end_date=${endStr}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        renderStrip(data.daily.time, data.daily.weathercode, data.daily.temperature_2m_max, true);
+      } catch(e) {
+        renderFallbackStrip();
+      }
+    } else if (daysUntilTrip < 0) {
+      // Trip in the past or happening now
+      document.getElementById('weather-label').textContent = 'Live forecast';
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.lat}&longitude=${TRIP.lon}&daily=weathercode,temperature_2m_max&timezone=auto&forecast_days=7`;
+        const res = await fetch(url);
+        const data = await res.json();
+        renderStrip(data.daily.time, data.daily.weathercode, data.daily.temperature_2m_max, false);
+      } catch(e) {
+        renderFallbackStrip();
+      }
+    } else {
+      // Trip is far away — show climate strip instead of forecast
+      document.getElementById('weather-label').textContent = `${Math.abs(daysUntilTrip)} days until trip`;
+      renderClimateStrip(tripStart, climate);
+    }
+  }
+
+  function renderStrip(times, codes, temps, isTripForecast) {
+    const strip = document.getElementById('weather-strip');
+    strip.innerHTML = '';
+    times.forEach((dateStr, i) => {
+      const d = new Date(dateStr);
+      const label = isTripForecast
+        ? (i === 0 ? 'Day 1' : 'Day ' + (i + 1))
+        : (i === 0 ? 'Today' : DAYS_SHORT[d.getDay()]);
+      const emoji = WMO[codes[i]] || '🌡️';
+      const temp = Math.round(temps[i]);
+      const el = document.createElement('div');
+      el.className = 'weather-day' + (i === 0 ? ' today' : '');
+      el.innerHTML = `<div class="wd">${label}</div><div class="wi">${emoji}</div><div class="wt">${temp}°</div>`;
+      strip.appendChild(el);
+    });
+    updateOutfitWeather(times, codes, temps);
+  }
+
+  function renderClimateStrip(tripStart, climate) {
+    // Show a typical week strip based on climate averages with slight variation
+    const strip = document.getElementById('weather-strip');
+    strip.innerHTML = '';
+    const variation = [0, 1, -1, 2, 0, -2, 1];
+    const icons = ['☀️','🌤️','☀️','⛅','☀️','🌤️','☀️'];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(tripStart);
+      d.setDate(d.getDate() + i);
+      const label = i === 0 ? 'Day 1' : 'Day ' + (i + 1);
+      const temp = climate.high + variation[i];
+      const el = document.createElement('div');
+      el.className = 'weather-day' + (i === 0 ? ' today' : '');
+      el.innerHTML = `<div class="wd">${label}</div><div class="wi">${icons[i]}</div><div class="wt">~${temp}°</div>`;
+      strip.appendChild(el);
+    }
+  }
+
+  function renderFallbackStrip() {
+    document.getElementById('weather-strip').innerHTML = `
+      <div class="weather-day today"><div class="wd">Day 1</div><div class="wi">☀️</div><div class="wt">31°</div></div>
+      <div class="weather-day"><div class="wd">Day 2</div><div class="wi">☀️</div><div class="wt">30°</div></div>
+      <div class="weather-day"><div class="wd">Day 3</div><div class="wi">🌤️</div><div class="wt">29°</div></div>
+      <div class="weather-day"><div class="wd">Day 4</div><div class="wi">☀️</div><div class="wt">31°</div></div>
+      <div class="weather-day"><div class="wd">Day 5</div><div class="wi">⛅</div><div class="wt">28°</div></div>
+      <div class="weather-day"><div class="wd">Day 6</div><div class="wi">☀️</div><div class="wt">30°</div></div>
+      <div class="weather-day"><div class="wd">Day 7</div><div class="wi">☀️</div><div class="wt">31°</div></div>`;
+  }
+
+  function updateOutfitWeather(times, codes, temps) {
+    const pills = document.querySelectorAll('.tl-weather-pill');
+    pills.forEach((pill, i) => {
+      if (times && times[i]) {
+        const emoji = WMO[codes[i]] || '🌡️';
+        const temp = Math.round(temps[i]);
+        pill.textContent = `${emoji} ${temp}°`;
+      }
+    });
+  }
+
+  fetchWeather();
+
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
