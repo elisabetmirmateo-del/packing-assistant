@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#ffffff"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <title>Packing Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #4A7FA5;
+      --brand-dark: #2f5f80;
+      --brand-light: #e8f2f9;
+      --brand-mid: #c5dff0;
+      --ink: #1a1a1a;
+      --ink-mid: #555555;
+      --ink-light: #888888;
+      --surface: #ffffff;
+      --surface-2: #f7f7f6;
+      --surface-3: #f0efee;
+      --border: #e5e3e0;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+      --nav-h: 72px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--surface-2);
+      font-family: var(--font-body);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── App shell ── */
+    #app { height: 100dvh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+    /* ── Screens ── */
+    .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; padding-bottom: calc(var(--nav-h) + 12px); -webkit-overflow-scrolling: touch; }
+    .screen.active { display: flex; }
+
+    /* ── Header ── */
+    .app-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+    .header-logo { display: flex; align-items: center; gap: 10px; }
+    .header-logo .logo-mark { width: 32px; height: 32px; background: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .header-logo .logo-mark svg { width: 20px; height: 20px; fill: white; }
+    .header-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+    .header-action { width: 36px; height: 36px; border: none; background: var(--surface-3); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink-mid); transition: background 0.2s; }
+    .header-action:hover { background: var(--brand-light); color: var(--brand); }
+
+    /* ── Bottom nav ── */
+    .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; padding: 0 8px; padding-bottom: env(safe-area-inset-bottom); z-index: 20; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border: none; background: none; cursor: pointer; color: var(--ink-light); transition: color 0.2s; border-radius: var(--radius-sm); }
+    .nav-item.active { color: var(--brand); }
+    .nav-item svg { width: 22px; height: 22px; }
+    .nav-item span { font-size: 10px; font-weight: 500; letter-spacing: 0.03em; }
+    .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--brand); opacity: 0; transition: opacity 0.2s; margin-top: -2px; }
+    .nav-item.active .nav-dot { opacity: 1; }
+
+    /* ── Cards ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin: 0 16px 12px; transition: box-shadow 0.2s; }
+    .card:hover { box-shadow: var(--shadow); }
+    .card-sm { padding: 14px 16px; border-radius: var(--radius-sm); }
+
+    /* ── Section header ── */
+    .section-head { padding: 20px 24px 8px; display: flex; align-items: baseline; justify-content: space-between; }
+    .section-head h2 { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); }
+    .section-head a { font-size: 13px; color: var(--brand); cursor: pointer; font-weight: 500; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 100px; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: var(--brand); color: white; }
+    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(74,127,165,0.35); }
+    .btn-secondary { background: var(--surface-3); color: var(--ink); }
+    .btn-secondary:hover { background: var(--brand-light); color: var(--brand); }
+    .btn-outline { background: transparent; color: var(--brand); border: 1.5px solid var(--brand-mid); }
+    .btn-outline:hover { background: var(--brand-light); }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 8px 16px; font-size: 13px; }
+
+    /* ── Tags / badges ── */
+    .tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+    .tag-blue { background: var(--brand-light); color: var(--brand-dark); }
+    .tag-green { background: #e8f5ee; color: #2d7a4f; }
+    .tag-amber { background: #fef3e2; color: #a05e1a; }
+    .tag-red { background: #fdecea; color: #a33030; }
+
+    /* ── Form elements ── */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-mid); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .field input, .field select, .field textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; color: var(--ink); background: var(--surface); transition: border-color 0.2s; outline: none; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brand); }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* ── Empty state ── */
+    .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 32px; text-align: center; gap: 12px; }
+    .empty-icon { width: 64px; height: 64px; background: var(--brand-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .empty-icon svg { width: 28px; height: 28px; color: var(--brand); }
+    .empty h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+    .empty p { font-size: 14px; color: var(--ink-light); line-height: 1.6; max-width: 240px; }
+
+    /* ── Checklist ── */
+    .check-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .check-item:last-child { border-bottom: none; }
+    .check-box { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .check-item.checked .check-box { background: var(--brand); border-color: var(--brand); }
+    .check-item.checked .check-box svg { display: block; }
+    .check-box svg { display: none; width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+    .check-item.checked .check-label { text-decoration: line-through; color: var(--ink-light); }
+    .check-label { font-size: 15px; }
+
+    /* ── Weather strip ── */
+    .weather-strip { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; scrollbar-width: none; }
+    .weather-strip::-webkit-scrollbar { display: none; }
+    .weather-day { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; min-width: 56px; }
+    .weather-day.today { background: var(--brand-light); }
+    .weather-day .wd { font-size: 11px; color: var(--ink-light); font-weight: 500; }
+    .weather-day .wi { font-size: 20px; }
+    .weather-day .wt { font-size: 13px; font-weight: 500; }
+
+    /* ── Trip hero ── */
+    .trip-hero { margin: 16px 16px 0; border-radius: var(--radius); background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); padding: 24px; color: white; position: relative; overflow: hidden; min-height: 160px; }
+    .trip-hero .hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: var(--radius); }
+    .trip-hero .hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(20,40,60,0.72) 0%, rgba(10,25,45,0.85) 100%); border-radius: var(--radius); }
+    .trip-hero .hero-content { position: relative; z-index: 2; }
+    .trip-hero::before { display: none; }
+    .trip-hero::after { display: none; }
+    .trip-hero h3 { font-family: var(--font-display); font-size: 26px; font-weight: 600; margin-bottom: 4px; }
+    .trip-hero .trip-dates { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
+    .trip-meta { display: flex; gap: 20px; }
+    .trip-meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .trip-meta-item .label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; }
+    .trip-meta-item .value { font-size: 15px; font-weight: 500; }
+
+    /* ── Outfit grid ── */
+    .outfit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
+    .outfit-card { border-radius: var(--radius-sm); overflow: hidden; border: 1.5px solid var(--border); cursor: pointer; transition: border-color 0.2s; }
+    .outfit-card:hover { border-color: var(--brand); }
+    .outfit-img { width: 100%; aspect-ratio: 3/4; background: var(--surface-3); display: flex; align-items: center; justify-content: center; }
+    .outfit-img svg { width: 32px; height: 32px; color: var(--ink-light); }
+    .outfit-info { padding: 10px; }
+    .outfit-info .day { font-size: 11px; color: var(--ink-light); font-weight: 500; }
+    .outfit-info .name { font-size: 13px; font-weight: 500; }
+
+    /* ── Profile card ── */
+    .profile-card { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: 0 16px 10px; cursor: pointer; transition: border-color 0.2s; }
+    .profile-card:hover { border-color: var(--brand); }
+    .profile-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--brand-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--brand); flex-shrink: 0; }
+    .profile-info { flex: 1; }
+    .profile-info .name { font-size: 16px; font-weight: 500; }
+    .profile-info .sub { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
+
+    /* ── Wellness ── */
+    .med-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .med-row:last-child { border-bottom: none; }
+    .med-info .name { font-size: 15px; font-weight: 500; }
+    .med-info .dose { font-size: 13px; color: var(--ink-light); }
+    .med-toggle { display: flex; gap: 6px; }
+    .time-pill { padding: 5px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border); color: var(--ink-light); cursor: pointer; transition: all 0.2s; }
+    .time-pill.taken { background: var(--brand); border-color: var(--brand); color: white; }
+
+    /* ── Home screen ── */
+    .home-banner { margin: 16px 16px 0; padding: 20px; border-radius: var(--radius); background: var(--brand-light); border: 1px solid var(--brand-mid); display: flex; align-items: center; gap: 16px; }
+    .home-banner svg { width: 36px; height: 36px; color: var(--brand); flex-shrink: 0; }
+    .home-banner h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--brand-dark); }
+    .home-banner p { font-size: 13px; color: var(--brand-dark); opacity: 0.8; margin-top: 2px; }
+
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 0 16px; }
+    .stat-box { background: var(--surface-2); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; }
+    .stat-box .num { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--brand); line-height: 1; }
+    .stat-box .lbl { font-size: 11px; color: var(--ink-light); margin-top: 4px; font-weight: 500; }
+
+    /* ── Premium upsell ── */
+    .premium-banner { margin: 0 16px 12px; padding: 16px 20px; border-radius: var(--radius); background: linear-gradient(135deg, #1a1a2e 0%, #2f3b6e 100%); color: white; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .premium-banner .text h4 { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+    .premium-banner .text p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+    .premium-banner .btn-gold { background: #c9a84c; color: #1a1a2e; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; }
+
+    /* ── Modal ── */
+    .modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: none; align-items: flex-end; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px; }
+    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+    .modal h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 20px; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .screen.active > * { animation: fadeUp 0.3s ease both; }
+    .screen.active > *:nth-child(2) { animation-delay: 0.05s; }
+    .screen.active > *:nth-child(3) { animation-delay: 0.1s; }
+    .screen.active > *:nth-child(4) { animation-delay: 0.15s; }
+    .screen.active > *:nth-child(5) { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ HOME SCREEN ══ -->
+  <div class="screen active" id="screen-home">
+    <div class="app-header">
+      <div class="header-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2"/></svg>
+        </div>
+        <span class="header-title">Packing Assistant</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-settings')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </button>
+    </div>
+
+    <div class="home-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div>
+        <h3>Welcome back</h3>
+        <p>Your next trip is in 12 days — let's get packing!</p>
+      </div>
+    </div>
+
+    <div class="section-head" style="padding-top:20px;">
+      <h2>Overview</h2>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="num">1</div><div class="lbl">Active trip</div></div>
+      <div class="stat-box"><div class="num">24</div><div class="lbl">Items packed</div></div>
+      <div class="stat-box"><div class="num">3</div><div class="lbl">Outfits set</div></div>
+    </div>
+
+    <div class="section-head">
+      <h2>Current trip</h2>
+      <a onclick="switchScreen('trips')">View all</a>
+    </div>
+    <div class="trip-hero" onclick="switchScreen('trips')">
+      <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h3>Barcelona, Spain</h3>
+        <div class="trip-dates">14 July – 21 July 2025 · 7 nights</div>
+        <div class="trip-meta">
+          <div class="trip-meta-item"><span class="label">Flight</span><span class="value">IB3162</span></div>
+          <div class="trip-meta-item"><span class="label">Hotel</span><span class="value">Casa Fuster</span></div>
+          <div class="trip-meta-item"><span class="label">People</span><span class="value">4</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:8px;">
+      <h2>Today's weather</h2>
+    </div>
+    <div class="weather-strip">
+      <div class="weather-day today"><div class="wd">Today</div><div class="wi">☀️</div><div class="wt">28°</div></div>
+      <div class="weather-day"><div class="wd">Tue</div><div class="wi">⛅</div><div class="wt">25°</div></div>
+      <div class="weather-day"><div class="wd">Wed</div><div class="wi">☀️</div><div class="wt">29°</div></div>
+      <div class="weather-day"><div class="wd">Thu</div><div class="wi">🌤️</div><div class="wt">27°</div></div>
+      <div class="weather-day"><div class="wd">Fri</div><div class="wi">⛅</div><div class="wt">24°</div></div>
+      <div class="weather-day"><div class="wd">Sat</div><div class="wi">🌧️</div><div class="wt">21°</div></div>
+      <div class="weather-day"><div class="wd">Sun</div><div class="wi">☀️</div><div class="wt">26°</div></div>
+    </div>
+
+    <div style="height:8px;"></div>
+    <div class="premium-banner">
+      <div class="text">
+        <h4>Upgrade to Premium</h4>
+        <p>Insurance reports, outfit archive & more</p>
+      </div>
+      <button class="btn-gold">Upgrade</button>
+    </div>
+  </div>
+
+  <!-- ══ TRIPS SCREEN ══ -->
+  <div class="screen" id="screen-trips">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Trips</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-trip')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div class="trip-hero" style="margin-top:16px;">
+      <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h3>Barcelona, Spain</h3>
+        <div class="trip-dates">14 July – 21 July 2025 · 7 nights</div>
+        <div class="trip-meta">
+          <div class="trip-meta-item"><span class="label">Flight</span><span class="value">IB3162</span></div>
+          <div class="trip-meta-item"><span class="label">Hotel</span><span class="value">Casa Fuster</span></div>
+          <div class="trip-meta-item"><span class="label">Transfer</span><span class="value">Booked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 12px 16px; display:flex; gap:8px;">
+      <span class="tag tag-green">✓ Flights booked</span>
+      <span class="tag tag-green">✓ Hotel booked</span>
+      <span class="tag tag-amber">⏳ Packing 68%</span>
+    </div>
+
+    <div class="section-head">
+      <h2>Packing list</h2>
+      <a>Edit</a>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;color:var(--ink-light);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;">Clothing</div>
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">7× T-shirts</span>
+      </div>
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">3× Shorts</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">1× Smart dress</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">Swimwear</span>
+      </div>
+      <div class="divider" style="margin:12px 0;"></div>
+      <div style="font-size:12px;font-weight:500;color:var(--ink-light);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;">Essentials</div>
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">Passports</span>
+      </div>
+      <div class="check-item checked" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">Travel insurance docs</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">Phone chargers</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="check-label">Sunscreen SPF50</span>
+      </div>
+    </div>
+    <div style="padding: 0 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-item')">+ Add item</button>
+    </div>
+  </div>
+
+  <!-- ══ OUTFITS SCREEN ══ -->
+  <div class="screen" id="screen-outfits">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Outfits</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-outfit')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div style="padding: 16px 16px 8px; display:flex; gap:8px; flex-wrap:wrap;">
+      <span class="tag tag-blue">Barcelona · 7 days</span>
+      <span class="tag tag-green">3 outfits planned</span>
+    </div>
+
+    <div class="outfit-grid">
+      <div class="outfit-card">
+        <div class="outfit-img" style="background: linear-gradient(135deg, #e8f2f9, #c5dff0);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+        </div>
+        <div class="outfit-info"><div class="day">Day 1 — Mon</div><div class="name">Arrival look</div></div>
+      </div>
+      <div class="outfit-card">
+        <div class="outfit-img" style="background: linear-gradient(135deg, #fef3e2, #fde5b5);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+        </div>
+        <div class="outfit-info"><div class="day">Day 2 — Tue</div><div class="name">Beach day</div></div>
+      </div>
+      <div class="outfit-card">
+        <div class="outfit-img" style="background: linear-gradient(135deg, #e8f5ee, #c5e8d4);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+        </div>
+        <div class="outfit-info"><div class="day">Day 3 — Wed</div><div class="name">Sightseeing</div></div>
+      </div>
+      <div class="outfit-card" onclick="openModal('modal-add-outfit')" style="border-style:dashed;">
+        <div class="outfit-img" style="background: var(--surface-2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="outfit-info"><div class="day">Add outfit</div><div class="name" style="color:var(--ink-light)">Tap to upload</div></div>
+      </div>
+    </div>
+
+    <div style="height:12px;"></div>
+    <div class="premium-banner">
+      <div class="text">
+        <h4>Outfit archive</h4>
+        <p>Save looks from past trips</p>
+      </div>
+      <button class="btn-gold">Premium</button>
+    </div>
+  </div>
+
+  <!-- ══ WELLNESS SCREEN ══ -->
+  <div class="screen" id="screen-wellness">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Wellness</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-med')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div class="section-head">
+      <h2>Today's tracker</h2>
+      <a>Mon 14 Jul</a>
+    </div>
+    <div class="card">
+      <div class="med-row">
+        <div class="med-info"><div class="name">Vitamin D</div><div class="dose">1000 IU · once daily</div></div>
+        <div class="med-toggle"><button class="time-pill taken" onclick="togglePill(this)">AM</button></div>
+      </div>
+      <div class="med-row">
+        <div class="med-info"><div class="name">Omega 3</div><div class="dose">1g · twice daily</div></div>
+        <div class="med-toggle">
+          <button class="time-pill taken" onclick="togglePill(this)">AM</button>
+          <button class="time-pill" onclick="togglePill(this)">PM</button>
+        </div>
+      </div>
+      <div class="med-row">
+        <div class="med-info"><div class="name">Antihistamine</div><div class="dose">10mg · as needed</div></div>
+        <div class="med-toggle"><button class="time-pill" onclick="togglePill(this)">Take</button></div>
+      </div>
+      <div class="med-row">
+        <div class="med-info"><div class="name">SPF supplement</div><div class="dose">2 caps · with food</div></div>
+        <div class="med-toggle"><button class="time-pill" onclick="togglePill(this)">AM</button></div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2>Allergy notes</h2>
+    </div>
+    <div class="card">
+      <div style="display:flex; align-items:start; gap:12px;">
+        <div style="width:36px;height:36px;background:#fdecea;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:500;margin-bottom:4px;">Mia — Penicillin allergy</div>
+          <div style="font-size:13px;color:var(--ink-light);line-height:1.5;">Carries EpiPen. No penicillin-based antibiotics. GP: Dr Sarah Williams 020 7123 4567</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 0 16px;">
+      <button class="btn btn-outline btn-full btn-sm">+ Add medication / supplement</button>
+    </div>
+  </div>
+
+  <!-- ══ PROFILES SCREEN ══ -->
+  <div class="screen" id="screen-profiles">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Profiles</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-profile')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div class="section-head">
+      <h2>Family</h2>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-avatar">S</div>
+      <div class="profile-info"><div class="name">Sarah</div><div class="sub">Adult · Primary account</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar">J</div>
+      <div class="profile-info"><div class="name">James</div><div class="sub">Adult · Shared profile</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar" style="font-size:15px;">O</div>
+      <div class="profile-info"><div class="name">Olivia</div><div class="sub">Child · Age 8</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar" style="font-size:15px;">L</div>
+      <div class="profile-info"><div class="name">Leo</div><div class="sub">Child · Age 5</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <div style="padding: 8px 16px 0;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-profile')">+ Add family member</button>
+    </div>
+
+    <div class="section-head" style="margin-top:8px;">
+      <h2>Emergency contact</h2>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:500;">Dr Sarah Williams (GP)</div>
+          <div style="font-size:13px;color:var(--ink-light);margin-top:2px;">020 7123 4567</div>
+        </div>
+        <button class="btn btn-secondary btn-sm">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchScreen('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-trips" onclick="switchScreen('trips')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/></svg>
+      <span>Trips</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-outfits" onclick="switchScreen('outfits')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+      <span>Outfits</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-wellness" onclick="switchScreen('wellness')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span>Wellness</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-profiles" onclick="switchScreen('profiles')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Family</span>
+      <div class="nav-dot"></div>
+    </button>
+  </nav>
+
+  <!-- ══ MODALS ══ -->
+
+  <!-- Add Trip -->
+  <div class="modal-overlay" id="modal-add-trip" onclick="closeModal(event, 'modal-add-trip')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>New trip</h3>
+      <div class="field"><label>Destination</label><input type="text" placeholder="e.g. Paris, France"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="field"><label>Departure</label><input type="date"/></div>
+        <div class="field"><label>Return</label><input type="date"/></div>
+      </div>
+      <div class="field"><label>Flight number</label><input type="text" placeholder="e.g. BA234"/></div>
+      <div class="field"><label>Hotel / accommodation</label><input type="text" placeholder="Hotel name"/></div>
+      <div class="field"><label>Transfer / car booking</label><input type="text" placeholder="Reference or details"/></div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-trip')">Save trip</button>
+    </div>
+  </div>
+
+  <!-- Add Item -->
+  <div class="modal-overlay" id="modal-add-item" onclick="closeModal(event, 'modal-add-item')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add packing item</h3>
+      <div class="field"><label>Item name</label><input type="text" placeholder="e.g. Sunglasses"/></div>
+      <div class="field"><label>Category</label>
+        <select>
+          <option>Clothing</option>
+          <option>Essentials</option>
+          <option>Toiletries</option>
+          <option>Kids</option>
+          <option>Electronics</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Quantity</label><input type="number" placeholder="1" min="1"/></div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-item')">Add to list</button>
+    </div>
+  </div>
+
+  <!-- Add Outfit -->
+  <div class="modal-overlay" id="modal-add-outfit" onclick="closeModal(event, 'modal-add-outfit')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add outfit</h3>
+      <div class="field"><label>Outfit name</label><input type="text" placeholder="e.g. Beach day look"/></div>
+      <div class="field"><label>Assign to day</label>
+        <select>
+          <option>Day 1 — Monday 14 Jul</option>
+          <option>Day 2 — Tuesday 15 Jul</option>
+          <option>Day 3 — Wednesday 16 Jul</option>
+          <option>Day 4 — Thursday 17 Jul</option>
+          <option>Day 5 — Friday 18 Jul</option>
+        </select>
+      </div>
+      <div class="field"><label>Photo</label>
+        <div style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:32px;text-align:center;color:var(--ink-light);cursor:pointer;" onclick="alert('In the real app, this opens your camera roll!')">
+          <div style="font-size:28px;margin-bottom:8px;">📷</div>
+          <div style="font-size:14px;">Tap to upload from camera roll</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-outfit')">Save outfit</button>
+    </div>
+  </div>
+
+  <!-- Add Med -->
+  <div class="modal-overlay" id="modal-add-med" onclick="closeModal(event, 'modal-add-med')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add medication</h3>
+      <div class="field"><label>Name</label><input type="text" placeholder="e.g. Vitamin C"/></div>
+      <div class="field"><label>Dose</label><input type="text" placeholder="e.g. 500mg"/></div>
+      <div class="field"><label>Frequency</label>
+        <select>
+          <option>Once daily (AM)</option>
+          <option>Twice daily (AM + PM)</option>
+          <option>Three times daily</option>
+          <option>As needed</option>
+          <option>With food</option>
+        </select>
+      </div>
+      <div class="field"><label>Assign to</label>
+        <select>
+          <option>Sarah</option>
+          <option>James</option>
+          <option>Olivia</option>
+          <option>Leo</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-med')">Save</button>
+    </div>
+  </div>
+
+  <!-- Add Profile -->
+  <div class="modal-overlay" id="modal-add-profile" onclick="closeModal(event, 'modal-add-profile')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add family member</h3>
+      <div class="field"><label>Full name</label><input type="text" placeholder="Name"/></div>
+      <div class="field"><label>Type</label>
+        <select>
+          <option>Adult</option>
+          <option>Child</option>
+        </select>
+      </div>
+      <div class="field"><label>Date of birth</label><input type="date"/></div>
+      <div class="field"><label>Allergy / medical notes</label><textarea placeholder="Any allergies, conditions, or medication notes..."></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-profile')">Add member</button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="modal-overlay" id="modal-settings" onclick="closeModal(event, 'modal-settings')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Settings</h3>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;">Account</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;">Notifications</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;">Privacy & data</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;color:var(--brand);">Upgrade to Premium ✨</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+        <div style="font-size:12px;color:var(--ink-light);">Packing Assistant v1.0 · Made with ♥ in London</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    const navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  function togglePill(btn) {
+    btn.classList.toggle('taken');
+  }
+
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(event, id) {
+    if (event.target === document.getElementById(id)) {
+      document.getElementById(id).classList.remove('open');
+    }
+  }
+
+  function closeModalById(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+</script>
+</body>
+</html>
