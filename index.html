@@ -47,6 +47,9 @@
     /* ── Screens ── */
     .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; padding-bottom: calc(var(--nav-h) + 12px); -webkit-overflow-scrolling: touch; }
     .screen.active { display: flex; }
+    /* Hide bottom nav when auth is showing */
+    .auth-screen.active ~ * .bottom-nav,
+    body:has(.auth-screen.active) .bottom-nav { display: none; }
 
     /* ── Header ── */
     .app-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
@@ -276,6 +279,30 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+    /* ── Auth screens ── */
+    .auth-screen { position: absolute; inset: 0; background: var(--surface); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
+    .auth-screen.active { display: flex; }
+    .auth-logo { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 40px; }
+    .auth-logo-mark { width: 64px; height: 64px; background: var(--brand); border-radius: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .auth-logo-mark svg { width: 36px; height: 36px; fill: white; }
+    .auth-logo h1 { font-family: var(--font-display); font-size: 28px; font-weight: 600; }
+    .auth-logo p { font-size: 14px; color: var(--ink-light); text-align: center; }
+    .auth-form { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px; }
+    .auth-input-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .auth-input-wrap label { font-size: 12px; font-weight: 500; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.04em; }
+    .auth-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; color: var(--ink); background: var(--surface); outline: none; transition: border-color 0.2s; }
+    .auth-input:focus { border-color: var(--brand); }
+    .auth-btn { width: 100%; padding: 14px; background: var(--brand); color: white; border: none; border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
+    .auth-btn:hover { background: var(--brand-dark); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .auth-divider { text-align: center; font-size: 13px; color: var(--ink-light); margin: 4px 0; }
+    .auth-link { color: var(--brand); cursor: pointer; font-weight: 500; background: none; border: none; font-family: var(--font-body); font-size: 13px; }
+    .auth-link:hover { text-decoration: underline; }
+    .auth-error { background: #fdecea; color: #a33030; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); text-align: center; display: none; }
+    .auth-error.show { display: block; }
+    .auth-success { background: #e8f5ee; color: #2d7a4f; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); text-align: center; display: none; }
+    .auth-success.show { display: block; }
+
     /* ── Animations ── */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .screen.active > * { animation: fadeUp 0.3s ease both; }
@@ -293,7 +320,7 @@
     <div class="app-header">
       <div class="header-logo">
         <div class="logo-mark">
-          <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2"/></svg>
+          <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
         </div>
         <span class="header-title">Packing Assistant</span>
       </div>
@@ -849,6 +876,89 @@
     </div>
   </div>
 
+  <!-- ══ AUTH — LOGIN SCREEN ══ -->
+  <div class="auth-screen active" id="auth-login">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+      </div>
+      <h1>Packing Assistant</h1>
+      <p>Sign in to your account</p>
+    </div>
+    <div class="auth-form">
+      <div id="login-error" class="auth-error"></div>
+      <div class="auth-input-wrap">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="auth-input-wrap">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="login-password" placeholder="Your password" autocomplete="current-password"/>
+      </div>
+      <button class="auth-btn" id="login-btn" onclick="handleLogin()">Sign in</button>
+      <div class="auth-divider">
+        <button class="auth-link" onclick="showAuth('auth-forgot')">Forgot password?</button>
+      </div>
+      <div class="auth-divider">Don't have an account? <button class="auth-link" onclick="showAuth('auth-signup')">Sign up</button></div>
+    </div>
+  </div>
+
+  <!-- ══ AUTH — SIGNUP SCREEN ══ -->
+  <div class="auth-screen" id="auth-signup">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+      </div>
+      <h1>Create account</h1>
+      <p>Start packing smarter today</p>
+    </div>
+    <div class="auth-form">
+      <div id="signup-error" class="auth-error"></div>
+      <div id="signup-success" class="auth-success">Check your email to confirm your account!</div>
+      <div style="display:flex; gap:12px;">
+        <div class="auth-input-wrap" style="flex:1;">
+          <label>First name</label>
+          <input class="auth-input" type="text" id="signup-firstname" placeholder="Sarah" autocomplete="given-name"/>
+        </div>
+        <div class="auth-input-wrap" style="flex:1;">
+          <label>Last name</label>
+          <input class="auth-input" type="text" id="signup-lastname" placeholder="Smith" autocomplete="family-name"/>
+        </div>
+      </div>
+      <div class="auth-input-wrap">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="auth-input-wrap">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="signup-password" placeholder="At least 8 characters" autocomplete="new-password"/>
+      </div>
+      <button class="auth-btn" id="signup-btn" onclick="handleSignup()">Create account</button>
+      <div class="auth-divider">Already have an account? <button class="auth-link" onclick="showAuth('auth-login')">Sign in</button></div>
+    </div>
+  </div>
+
+  <!-- ══ AUTH — FORGOT PASSWORD SCREEN ══ -->
+  <div class="auth-screen" id="auth-forgot">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+      </div>
+      <h1>Reset password</h1>
+      <p>We'll send you a reset link</p>
+    </div>
+    <div class="auth-form">
+      <div id="forgot-error" class="auth-error"></div>
+      <div id="forgot-success" class="auth-success">Check your email for a reset link!</div>
+      <div class="auth-input-wrap">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="forgot-email" placeholder="you@example.com"/>
+      </div>
+      <button class="auth-btn" id="forgot-btn" onclick="handleForgot()">Send reset link</button>
+      <div class="auth-divider"><button class="auth-link" onclick="showAuth('auth-login')">← Back to sign in</button></div>
+    </div>
+  </div>
+
   <!-- ══ BOTTOM NAV ══ -->
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-home" onclick="switchScreen('home')">
@@ -1074,6 +1184,10 @@
           <span style="font-size:15px;color:var(--brand);">Upgrade to Premium ✨</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
+        <div style="padding:14px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="signOut()">
+          <span style="font-size:15px;color:#a33030;">Sign out</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
       </div>
       <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
         <div style="font-size:12px;color:var(--ink-light);">Packing Assistant v1.0 · Made with ♥ in London</div>
@@ -1153,7 +1267,118 @@
     closeModalById('modal-reminder');
   }
 
-  // ── Live weather (Open-Meteo, no API key needed) ──
+  // ── Supabase Auth ──
+  const SUPA_URL = 'https://xelhqfvtminnjxwimuvu.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlbGhxZnZ0bWlubmp4d2ltdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzYxODIsImV4cCI6MjA5MDgxMjE4Mn0.aCnMSnYdVI65r8YDhHpl8HRUEXAVpRvZ_UUxAAo-Tgw';
+
+  async function supaFetch(path, method, body) {
+    const res = await fetch(`${SUPA_URL}/auth/v1${path}`, {
+      method: method || 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return res.json();
+  }
+
+  function showAuth(id) {
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showApp(user) {
+    // Hide all auth screens
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    // Update greeting with user's first name
+    const firstName = user.user_metadata?.first_name || user.email.split('@')[0];
+    const banner = document.querySelector('.home-banner h3');
+    if (banner) banner.textContent = `Welcome back, ${firstName} 👋`;
+    // Show app
+    switchScreen('home');
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    const btn = document.getElementById('login-btn');
+    errEl.classList.remove('show');
+    if (!email || !password) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Signing in...';
+    const data = await supaFetch('/token?grant_type=password', 'POST', { email, password });
+    if (data.access_token) {
+      localStorage.setItem('pa_token', data.access_token);
+      localStorage.setItem('pa_user', JSON.stringify(data.user));
+      showApp(data.user);
+    } else {
+      errEl.textContent = data.error_description || 'Invalid email or password.';
+      errEl.classList.add('show');
+    }
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+
+  async function handleSignup() {
+    const firstName = document.getElementById('signup-firstname').value.trim();
+    const lastName = document.getElementById('signup-lastname').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const errEl = document.getElementById('signup-error');
+    const succEl = document.getElementById('signup-success');
+    const btn = document.getElementById('signup-btn');
+    errEl.classList.remove('show'); succEl.classList.remove('show');
+    if (!firstName || !email || !password) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('show'); return; }
+    if (password.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Creating account...';
+    const data = await supaFetch('/signup', 'POST', {
+      email, password,
+      data: { first_name: firstName, last_name: lastName }
+    });
+    if (data.id || data.user) {
+      succEl.classList.add('show');
+      setTimeout(() => showAuth('auth-login'), 3000);
+    } else {
+      errEl.textContent = data.msg || data.error_description || 'Something went wrong.';
+      errEl.classList.add('show');
+    }
+    btn.disabled = false; btn.textContent = 'Create account';
+  }
+
+  async function handleForgot() {
+    const email = document.getElementById('forgot-email').value.trim();
+    const errEl = document.getElementById('forgot-error');
+    const succEl = document.getElementById('forgot-success');
+    const btn = document.getElementById('forgot-btn');
+    errEl.classList.remove('show'); succEl.classList.remove('show');
+    if (!email) { errEl.textContent = 'Please enter your email.'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Sending...';
+    await supaFetch('/recover', 'POST', { email });
+    succEl.classList.add('show');
+    btn.disabled = false; btn.textContent = 'Send reset link';
+  }
+
+  // Check if already logged in
+  const storedUser = localStorage.getItem('pa_user');
+  if (storedUser) {
+    try { showApp(JSON.parse(storedUser)); } catch(e) { showAuth('auth-login'); }
+  }
+
+  // Allow Enter key on login
+  document.getElementById('login-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  // Add sign out to settings
+  function signOut() {
+    localStorage.removeItem('pa_token');
+    localStorage.removeItem('pa_user');
+    showAuth('auth-login');
+    closeModalById('modal-settings');
+  }
+
+
   const TRIP = {
     name: 'Barcelona',
     lat: 41.3851,
