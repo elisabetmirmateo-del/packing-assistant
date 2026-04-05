@@ -331,8 +331,8 @@
 
     <div class="home-banner">
       <div>
-        <h3>Welcome back, Sarah 👋</h3>
-        <p>Your next trip is in 12 days — let's get packing!</p>
+        <h3 id="home-greeting">Welcome 👋</h3>
+        <p id="home-subgreeting">Let's get you set up for your first trip!</p>
       </div>
     </div>
 
@@ -340,31 +340,41 @@
       <h2>Overview</h2>
     </div>
     <div class="stat-row">
-      <div class="stat-box"><div class="num">1</div><div class="lbl">Active trip</div></div>
-      <div class="stat-box"><div class="num">24</div><div class="lbl">Items packed</div></div>
-      <div class="stat-box"><div class="num">3</div><div class="lbl">Outfits set</div></div>
+      <div class="stat-box"><div class="num" id="stat-trips">0</div><div class="lbl">Active trips</div></div>
+      <div class="stat-box"><div class="num" id="stat-packed">0</div><div class="lbl">Items packed</div></div>
+      <div class="stat-box"><div class="num" id="stat-outfits">0</div><div class="lbl">Outfits set</div></div>
     </div>
 
     <div class="section-head">
       <h2>Current trip</h2>
       <a onclick="switchScreen('trips')">View all</a>
     </div>
-    <div class="trip-hero" onclick="switchScreen('trips')">
-      <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <h3>Barcelona, Spain</h3>
-        <div class="trip-dates">14 July – 21 July 2025 · 7 nights</div>
-        <div class="trip-meta">
-          <div class="trip-meta-item"><span class="label">Flight</span><span class="value">IB3162</span></div>
-          <div class="trip-meta-item"><span class="label">Hotel</span><span class="value">Casa Fuster</span></div>
-          <div class="trip-meta-item"><span class="label">People</span><span class="value">4</span></div>
-        </div>
-      </div>
+
+    <!-- Empty state — shown to new users -->
+    <div id="home-no-trip" class="card" style="margin: 0 16px; text-align:center; padding: 32px 24px;">
+      <div style="font-size:40px; margin-bottom:12px;">🧳</div>
+      <div style="font-family:var(--font-display); font-size:20px; font-weight:600; margin-bottom:8px;">No trips yet</div>
+      <div style="font-size:14px; color:var(--ink-light); margin-bottom:20px; line-height:1.6;">Add your first trip and start planning your packing list, outfits and more.</div>
+      <button class="btn btn-primary" onclick="openModal('modal-add-trip')">+ Add your first trip</button>
     </div>
 
+    <!-- Trip card — shown when user has a trip -->
+    <div id="home-trip-card" style="display:none;">
+      <div class="trip-hero" onclick="switchScreen('trips')">
+        <div class="hero-bg" id="home-trip-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <h3 id="home-trip-name">My Trip</h3>
+          <div class="trip-dates" id="home-trip-dates"></div>
+          <div class="trip-meta">
+            <div class="trip-meta-item"><span class="label">Flight</span><span class="value" id="home-trip-flight">—</span></div>
+            <div class="trip-meta-item"><span class="label">Hotel</span><span class="value" id="home-trip-hotel">—</span></div>
+            <div class="trip-meta-item"><span class="label">People</span><span class="value" id="home-trip-people">—</span></div>
+          </div>
+        </div>
+      </div>
     <div class="section-head" style="margin-top:8px;">
-      <h2>Barcelona weather</h2>
+      <h2 id="weather-section-title">Weather</h2>
       <a style="font-size:12px; color:var(--ink-light);" id="weather-label">Loading...</a>
     </div>
 
@@ -1003,7 +1013,7 @@
       <div class="field"><label>Flight number</label><input type="text" placeholder="e.g. BA234"/></div>
       <div class="field"><label>Hotel / accommodation</label><input type="text" placeholder="Hotel name"/></div>
       <div class="field"><label>Transfer / car booking</label><input type="text" placeholder="Reference or details"/></div>
-      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-trip')">Save trip</button>
+      <button class="btn btn-primary btn-full" onclick="saveTrip()">Save trip</button>
     </div>
   </div>
 
@@ -1290,13 +1300,36 @@
   }
 
   function showApp(user) {
-    // Hide all auth screens
     document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
-    // Update greeting with user's first name
     const firstName = user.user_metadata?.first_name || user.email.split('@')[0];
-    const banner = document.querySelector('.home-banner h3');
-    if (banner) banner.textContent = `Welcome back, ${firstName} 👋`;
-    // Show app
+    const greeting = document.getElementById('home-greeting');
+    const subgreeting = document.getElementById('home-subgreeting');
+    // Check localStorage for any saved trip
+    const savedTrip = localStorage.getItem('pa_current_trip');
+    if (savedTrip) {
+      try {
+        const trip = JSON.parse(savedTrip);
+        greeting.textContent = `Welcome back, ${firstName} 👋`;
+        subgreeting.textContent = `Your next trip is coming up — let's get packing!`;
+        document.getElementById('home-no-trip').style.display = 'none';
+        document.getElementById('home-trip-card').style.display = 'block';
+        document.getElementById('home-trip-name').textContent = trip.destination || 'My Trip';
+        document.getElementById('home-trip-dates').textContent = trip.dates || '';
+        document.getElementById('home-trip-flight').textContent = trip.flight || '—';
+        document.getElementById('home-trip-hotel').textContent = trip.hotel || '—';
+        document.getElementById('home-trip-people').textContent = trip.people || '—';
+        document.getElementById('stat-trips').textContent = '1';
+        document.getElementById('weather-section-title').textContent = `${trip.destination?.split(',')[0] || 'Trip'} weather`;
+      } catch(e) {}
+    } else {
+      greeting.textContent = `Welcome, ${firstName}! 👋`;
+      subgreeting.textContent = `Let's get you set up for your first trip!`;
+      document.getElementById('home-no-trip').style.display = 'block';
+      document.getElementById('home-trip-card').style.display = 'none';
+      document.getElementById('stat-trips').textContent = '0';
+      document.getElementById('stat-packed').textContent = '0';
+      document.getElementById('stat-outfits').textContent = '0';
+    }
     switchScreen('home');
   }
 
@@ -1525,6 +1558,28 @@
   }
 
   fetchWeather();
+
+  function saveTrip() {
+    const destination = document.querySelector('#modal-add-trip input[placeholder="e.g. Paris, France"]').value.trim();
+    const departure = document.querySelector('#modal-add-trip input[type="date"]:first-of-type').value;
+    const returnDate = document.querySelector('#modal-add-trip input[type="date"]:last-of-type').value;
+    const flight = document.querySelector('#modal-add-trip input[placeholder="e.g. BA234"]').value.trim();
+    const hotel = document.querySelector('#modal-add-trip input[placeholder="Hotel name"]').value.trim();
+    if (!destination) { closeModalById('modal-add-trip'); return; }
+    const trip = { destination, flight, hotel, people: '1',
+      dates: departure && returnDate ? `${formatDate(departure)} – ${formatDate(returnDate)}` : '' };
+    localStorage.setItem('pa_current_trip', JSON.stringify(trip));
+    closeModalById('modal-add-trip');
+    const storedUser = localStorage.getItem('pa_user');
+    if (storedUser) showApp(JSON.parse(storedUser));
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
 
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
