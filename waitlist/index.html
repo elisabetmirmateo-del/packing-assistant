@@ -82,8 +82,9 @@
       background: var(--brand);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
     }
-    .nav-logo-mark svg { width: 22px; height: 22px; fill: white; }
+
     .nav-logo-text {
       font-family: var(--font-display);
       font-size: 22px;
@@ -445,7 +446,13 @@
     <nav>
       <a class="nav-logo" href="/">
         <div class="nav-logo-mark">
-          <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2"/></svg>
+          <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#4A7FA5"/>
+            <!-- P -->
+            <text x="8" y="28" font-family="Cormorant Garamond, Georgia, serif" font-size="26" font-weight="600" fill="white" opacity="1">P</text>
+            <!-- A overlapping -->
+            <text x="16" y="28" font-family="Cormorant Garamond, Georgia, serif" font-size="26" font-weight="600" fill="white" opacity="0.92">A</text>
+          </svg>
         </div>
         <span class="nav-logo-text">Packing Assistant</span>
       </a>
