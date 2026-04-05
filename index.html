@@ -389,7 +389,7 @@
 
     <!-- Climate summary card -->
     <div id="weather-climate-card" style="margin: 8px 16px 0; padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); display:none;">
-      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;">July in Barcelona — typical climate</div>
+      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;" id="clim-title">Typical climate</div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <div class="climate-stat"><div class="climate-val" id="clim-high">—</div><div class="climate-lbl">Avg high</div></div>
         <div class="climate-stat"><div class="climate-val" id="clim-low">—</div><div class="climate-lbl">Avg low</div></div>
@@ -428,7 +428,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="trips-empty" class="empty">
+    <div id="trips-empty" class="empty" style="display:flex;">
       <div class="empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/></svg>
       </div>
@@ -480,7 +480,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="outfits-empty" class="empty">
+    <div id="outfits-empty" class="empty" style="display:flex;">
       <div class="empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
       </div>
@@ -514,7 +514,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="wellness-empty" class="empty">
+    <div id="wellness-empty" class="empty" style="display:flex;">
       <div class="empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
@@ -543,7 +543,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="profiles-empty" class="empty">
+    <div id="profiles-empty" class="empty" style="display:flex;">
       <div class="empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
@@ -1137,11 +1137,32 @@
 
   async function fetchWeather() {
     const today = new Date();
-    const tripStart = TRIP.startDate;
+
+    // Get trip data from localStorage if available
+    let tripDest = 'your destination';
+    let tripLat = TRIP.lat;
+    let tripLon = TRIP.lon;
+    let tripStart = TRIP.startDate;
+    let tripEnd = TRIP.endDate;
+
+    const savedTrip = localStorage.getItem('pa_current_trip');
+    if (savedTrip) {
+      try {
+        const t = JSON.parse(savedTrip);
+        if (t.destination) tripDest = t.destination.split(',')[0];
+        if (t.startDate) tripStart = new Date(t.startDate);
+        if (t.endDate) tripEnd = new Date(t.endDate);
+      } catch(e) {}
+    }
+
     const daysUntilTrip = Math.ceil((tripStart - today) / (1000 * 60 * 60 * 24));
     const tripMonth = tripStart.getMonth();
     const climate = BARCELONA_CLIMATE[tripMonth];
     const monthName = tripStart.toLocaleString('default', { month: 'long' });
+
+    // Update climate card title dynamically
+    const climTitle = document.getElementById('clim-title');
+    if (climTitle) climTitle.textContent = `${monthName} in ${tripDest} — typical climate`;
 
     // Always show climate summary
     document.getElementById('weather-climate-card').style.display = 'block';
@@ -1248,89 +1269,50 @@
 
   function loadScreenData() {
     const savedTrip = localStorage.getItem('pa_current_trip');
-    console.log('loadScreenData called, savedTrip:', savedTrip);
-
     if (savedTrip) {
       try {
         const trip = JSON.parse(savedTrip);
-        console.log('Trip loaded:', trip);
 
+        // Generic travel hero images by region (fallback to a beautiful generic one)
         const heroImg = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
 
-        // ── Home screen ──
-        const noTrip = document.getElementById('home-no-trip');
-        const tripCard = document.getElementById('home-trip-card');
-        if (noTrip) noTrip.style.display = 'none';
-        if (tripCard) tripCard.style.display = 'block';
-        const tripName = document.getElementById('home-trip-name');
-        if (tripName) tripName.textContent = trip.destination || 'My Trip';
-        const tripDates = document.getElementById('home-trip-dates');
-        if (tripDates) tripDates.textContent = trip.dates || '';
-        const tripFlight = document.getElementById('home-trip-flight');
-        if (tripFlight) tripFlight.textContent = trip.flight || '—';
-        const tripHotel = document.getElementById('home-trip-hotel');
-        if (tripHotel) tripHotel.textContent = trip.hotel || '—';
-        const tripPeople = document.getElementById('home-trip-people');
-        if (tripPeople) tripPeople.textContent = trip.people || '1';
-        const tripBg = document.getElementById('home-trip-bg');
-        if (tripBg) tripBg.style.backgroundImage = `url('${heroImg}')`;
-        const statTrips = document.getElementById('stat-trips');
-        if (statTrips) statTrips.textContent = '1';
-        const weatherTitle = document.getElementById('weather-section-title');
-        if (weatherTitle) weatherTitle.textContent = `${trip.destination?.split(',')[0] || 'Trip'} weather`;
+        // ── Home screen trip card ──
+        document.getElementById('home-no-trip').style.display = 'none';
+        document.getElementById('home-trip-card').style.display = 'block';
+        document.getElementById('home-trip-name').textContent = trip.destination || 'My Trip';
+        document.getElementById('home-trip-dates').textContent = trip.dates || '';
+        document.getElementById('home-trip-flight').textContent = trip.flight || '—';
+        document.getElementById('home-trip-hotel').textContent = trip.hotel || '—';
+        document.getElementById('home-trip-people').textContent = trip.people || '1';
+        document.getElementById('home-trip-bg').style.backgroundImage = `url('${heroImg}')`;
+        document.getElementById('stat-trips').textContent = '1';
+        document.getElementById('weather-section-title').textContent = `${trip.destination?.split(',')[0] || 'Trip'} weather`;
 
         // ── Trips screen ──
-        const tripsEmpty = document.getElementById('trips-empty');
-        const tripsContent = document.getElementById('trips-content');
-        if (tripsEmpty) tripsEmpty.style.display = 'none';
-        if (tripsContent) tripsContent.style.display = 'block';
-        const tripsDest = document.getElementById('trips-destination');
-        if (tripsDest) tripsDest.textContent = trip.destination || 'My Trip';
-        const tripsDates = document.getElementById('trips-dates');
-        if (tripsDates) tripsDates.textContent = trip.dates || '';
-        const tripsFlight = document.getElementById('trips-flight');
-        if (tripsFlight) tripsFlight.textContent = trip.flight || '—';
-        const tripsHotel = document.getElementById('trips-hotel');
-        if (tripsHotel) tripsHotel.textContent = trip.hotel || '—';
-        const tripsTransfer = document.getElementById('trips-transfer');
-        if (tripsTransfer) tripsTransfer.textContent = trip.transfer || '—';
-        const tripsHeroBg = document.getElementById('trips-hero-bg');
-        if (tripsHeroBg) tripsHeroBg.style.backgroundImage = `url('${heroImg}')`;
+        document.getElementById('trips-empty').style.display = 'none';
+        document.getElementById('trips-content').style.display = 'block';
+        document.getElementById('trips-destination').textContent = trip.destination || 'My Trip';
+        document.getElementById('trips-dates').textContent = trip.dates || '';
+        document.getElementById('trips-flight').textContent = trip.flight || '—';
+        document.getElementById('trips-hotel').textContent = trip.hotel || '—';
+        document.getElementById('trips-transfer').textContent = trip.transfer || '—';
+        document.getElementById('trips-hero-bg').style.backgroundImage = `url('${heroImg}')`;
 
         // ── Outfits screen ──
-        const outfitsEmpty = document.getElementById('outfits-empty');
-        const outfitsContent = document.getElementById('outfits-content');
-        if (outfitsEmpty) outfitsEmpty.style.display = 'none';
-        if (outfitsContent) outfitsContent.style.display = 'block';
-        const outfitsTripName = document.getElementById('outfits-trip-name');
-        if (outfitsTripName) outfitsTripName.textContent = trip.destination?.split(',')[0] || 'My Trip';
-        const outfitsTripDates = document.getElementById('outfits-trip-dates');
-        if (outfitsTripDates) outfitsTripDates.textContent = trip.dates || '';
+        document.getElementById('outfits-empty').style.display = 'none';
+        document.getElementById('outfits-content').style.display = 'block';
+        document.getElementById('outfits-trip-name').textContent = trip.destination?.split(',')[0] || 'My Trip';
+        document.getElementById('outfits-trip-dates').textContent = trip.dates || '';
 
       } catch(e) { console.error('loadScreenData error:', e); }
     } else {
-      console.log('No trip found in localStorage');
-      // Show empty states with working buttons
-      const noTrip = document.getElementById('home-no-trip');
-      const tripCard = document.getElementById('home-trip-card');
-      if (noTrip) noTrip.style.display = 'block';
-      if (tripCard) tripCard.style.display = 'none';
-      const tripsEmpty = document.getElementById('trips-empty');
-      const tripsContent = document.getElementById('trips-content');
-      if (tripsEmpty) tripsEmpty.style.display = 'flex';
-      if (tripsContent) tripsContent.style.display = 'none';
-      const outfitsEmpty = document.getElementById('outfits-empty');
-      const outfitsContent = document.getElementById('outfits-content');
-      if (outfitsEmpty) outfitsEmpty.style.display = 'flex';
-      if (outfitsContent) outfitsContent.style.display = 'none';
-      const wellnessEmpty = document.getElementById('wellness-empty');
-      const wellnessContent = document.getElementById('wellness-content');
-      if (wellnessEmpty) wellnessEmpty.style.display = 'flex';
-      if (wellnessContent) wellnessContent.style.display = 'none';
-      const profilesEmpty = document.getElementById('profiles-empty');
-      const profilesContent = document.getElementById('profiles-content');
-      if (profilesEmpty) profilesEmpty.style.display = 'flex';
-      if (profilesContent) profilesContent.style.display = 'none';
+      // No trip — show empty states
+      document.getElementById('home-no-trip').style.display = 'block';
+      document.getElementById('home-trip-card').style.display = 'none';
+      document.getElementById('trips-empty').style.display = 'block';
+      document.getElementById('trips-content').style.display = 'none';
+      document.getElementById('outfits-empty').style.display = 'block';
+      document.getElementById('outfits-content').style.display = 'none';
     }
   }
 
