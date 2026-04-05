@@ -1015,7 +1015,6 @@
       document.getElementById('stat-outfits').textContent = '0';
     }
     switchScreen('home');
-    loadScreenData();
   }
 
   async function handleLogin() {
@@ -1080,7 +1079,10 @@
   // Check if already logged in
   const storedUser = localStorage.getItem('pa_user');
   if (storedUser) {
-    try { showApp(JSON.parse(storedUser)); } catch(e) { showAuth('auth-login'); }
+    try {
+      showApp(JSON.parse(storedUser));
+      history.replaceState({ screen: 'home' }, '', '#home');
+    } catch(e) { showAuth('auth-login'); }
   }
 
   // Allow Enter key on login
@@ -1305,6 +1307,7 @@
       dates: departure && returnDate ? `${formatDate(departure)} – ${formatDate(returnDate)}` : '' };
     localStorage.setItem('pa_current_trip', JSON.stringify(trip));
     closeModalById('modal-add-trip');
+    loadScreenData();
     const storedUser = localStorage.getItem('pa_user');
     if (storedUser) showApp(JSON.parse(storedUser));
   }
@@ -1322,7 +1325,21 @@
     document.getElementById('screen-' + name).classList.add('active');
     const navEl = document.getElementById('nav-' + name);
     if (navEl) navEl.classList.add('active');
+    loadScreenData();
+    // Push state so back button stays in app
+    history.pushState({ screen: name }, '', '#' + name);
   }
+
+  // Handle browser back button — stay in app
+  window.addEventListener('popstate', e => {
+    const screen = e.state?.screen || 'home';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('screen-' + screen)?.classList.add('active');
+    const navEl = document.getElementById('nav-' + screen);
+    if (navEl) navEl.classList.add('active');
+    loadScreenData();
+  });
 
   function toggleCheck(el) {
     el.classList.toggle('checked');
