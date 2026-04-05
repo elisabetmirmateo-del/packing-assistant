@@ -361,7 +361,7 @@
     <!-- Trip card — shown when user has a trip -->
     <div id="home-trip-card" style="display:none;">
       <div class="trip-hero" onclick="switchScreen('trips')">
-        <div class="hero-bg" id="home-trip-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
+        <div class="hero-bg" id="home-trip-bg"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <h3 id="home-trip-name">My Trip</h3>
@@ -1249,7 +1249,23 @@
     if (savedTrip) {
       try {
         const trip = JSON.parse(savedTrip);
-        // Show trips content
+
+        // Generic travel hero images by region (fallback to a beautiful generic one)
+        const heroImg = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+
+        // ── Home screen trip card ──
+        document.getElementById('home-no-trip').style.display = 'none';
+        document.getElementById('home-trip-card').style.display = 'block';
+        document.getElementById('home-trip-name').textContent = trip.destination || 'My Trip';
+        document.getElementById('home-trip-dates').textContent = trip.dates || '';
+        document.getElementById('home-trip-flight').textContent = trip.flight || '—';
+        document.getElementById('home-trip-hotel').textContent = trip.hotel || '—';
+        document.getElementById('home-trip-people').textContent = trip.people || '1';
+        document.getElementById('home-trip-bg').style.backgroundImage = `url('${heroImg}')`;
+        document.getElementById('stat-trips').textContent = '1';
+        document.getElementById('weather-section-title').textContent = `${trip.destination?.split(',')[0] || 'Trip'} weather`;
+
+        // ── Trips screen ──
         document.getElementById('trips-empty').style.display = 'none';
         document.getElementById('trips-content').style.display = 'block';
         document.getElementById('trips-destination').textContent = trip.destination || 'My Trip';
@@ -1257,12 +1273,23 @@
         document.getElementById('trips-flight').textContent = trip.flight || '—';
         document.getElementById('trips-hotel').textContent = trip.hotel || '—';
         document.getElementById('trips-transfer').textContent = trip.transfer || '—';
-        // Show outfits content
+        document.getElementById('trips-hero-bg').style.backgroundImage = `url('${heroImg}')`;
+
+        // ── Outfits screen ──
         document.getElementById('outfits-empty').style.display = 'none';
         document.getElementById('outfits-content').style.display = 'block';
         document.getElementById('outfits-trip-name').textContent = trip.destination?.split(',')[0] || 'My Trip';
         document.getElementById('outfits-trip-dates').textContent = trip.dates || '';
-      } catch(e) {}
+
+      } catch(e) { console.error('loadScreenData error:', e); }
+    } else {
+      // No trip — show empty states
+      document.getElementById('home-no-trip').style.display = 'block';
+      document.getElementById('home-trip-card').style.display = 'none';
+      document.getElementById('trips-empty').style.display = 'block';
+      document.getElementById('trips-content').style.display = 'none';
+      document.getElementById('outfits-empty').style.display = 'block';
+      document.getElementById('outfits-content').style.display = 'none';
     }
   }
 
