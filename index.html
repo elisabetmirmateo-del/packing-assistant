@@ -1248,50 +1248,89 @@
 
   function loadScreenData() {
     const savedTrip = localStorage.getItem('pa_current_trip');
+    console.log('loadScreenData called, savedTrip:', savedTrip);
+
     if (savedTrip) {
       try {
         const trip = JSON.parse(savedTrip);
+        console.log('Trip loaded:', trip);
 
-        // Generic travel hero images by region (fallback to a beautiful generic one)
         const heroImg = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
 
-        // ── Home screen trip card ──
-        document.getElementById('home-no-trip').style.display = 'none';
-        document.getElementById('home-trip-card').style.display = 'block';
-        document.getElementById('home-trip-name').textContent = trip.destination || 'My Trip';
-        document.getElementById('home-trip-dates').textContent = trip.dates || '';
-        document.getElementById('home-trip-flight').textContent = trip.flight || '—';
-        document.getElementById('home-trip-hotel').textContent = trip.hotel || '—';
-        document.getElementById('home-trip-people').textContent = trip.people || '1';
-        document.getElementById('home-trip-bg').style.backgroundImage = `url('${heroImg}')`;
-        document.getElementById('stat-trips').textContent = '1';
-        document.getElementById('weather-section-title').textContent = `${trip.destination?.split(',')[0] || 'Trip'} weather`;
+        // ── Home screen ──
+        const noTrip = document.getElementById('home-no-trip');
+        const tripCard = document.getElementById('home-trip-card');
+        if (noTrip) noTrip.style.display = 'none';
+        if (tripCard) tripCard.style.display = 'block';
+        const tripName = document.getElementById('home-trip-name');
+        if (tripName) tripName.textContent = trip.destination || 'My Trip';
+        const tripDates = document.getElementById('home-trip-dates');
+        if (tripDates) tripDates.textContent = trip.dates || '';
+        const tripFlight = document.getElementById('home-trip-flight');
+        if (tripFlight) tripFlight.textContent = trip.flight || '—';
+        const tripHotel = document.getElementById('home-trip-hotel');
+        if (tripHotel) tripHotel.textContent = trip.hotel || '—';
+        const tripPeople = document.getElementById('home-trip-people');
+        if (tripPeople) tripPeople.textContent = trip.people || '1';
+        const tripBg = document.getElementById('home-trip-bg');
+        if (tripBg) tripBg.style.backgroundImage = `url('${heroImg}')`;
+        const statTrips = document.getElementById('stat-trips');
+        if (statTrips) statTrips.textContent = '1';
+        const weatherTitle = document.getElementById('weather-section-title');
+        if (weatherTitle) weatherTitle.textContent = `${trip.destination?.split(',')[0] || 'Trip'} weather`;
 
         // ── Trips screen ──
-        document.getElementById('trips-empty').style.display = 'none';
-        document.getElementById('trips-content').style.display = 'block';
-        document.getElementById('trips-destination').textContent = trip.destination || 'My Trip';
-        document.getElementById('trips-dates').textContent = trip.dates || '';
-        document.getElementById('trips-flight').textContent = trip.flight || '—';
-        document.getElementById('trips-hotel').textContent = trip.hotel || '—';
-        document.getElementById('trips-transfer').textContent = trip.transfer || '—';
-        document.getElementById('trips-hero-bg').style.backgroundImage = `url('${heroImg}')`;
+        const tripsEmpty = document.getElementById('trips-empty');
+        const tripsContent = document.getElementById('trips-content');
+        if (tripsEmpty) tripsEmpty.style.display = 'none';
+        if (tripsContent) tripsContent.style.display = 'block';
+        const tripsDest = document.getElementById('trips-destination');
+        if (tripsDest) tripsDest.textContent = trip.destination || 'My Trip';
+        const tripsDates = document.getElementById('trips-dates');
+        if (tripsDates) tripsDates.textContent = trip.dates || '';
+        const tripsFlight = document.getElementById('trips-flight');
+        if (tripsFlight) tripsFlight.textContent = trip.flight || '—';
+        const tripsHotel = document.getElementById('trips-hotel');
+        if (tripsHotel) tripsHotel.textContent = trip.hotel || '—';
+        const tripsTransfer = document.getElementById('trips-transfer');
+        if (tripsTransfer) tripsTransfer.textContent = trip.transfer || '—';
+        const tripsHeroBg = document.getElementById('trips-hero-bg');
+        if (tripsHeroBg) tripsHeroBg.style.backgroundImage = `url('${heroImg}')`;
 
         // ── Outfits screen ──
-        document.getElementById('outfits-empty').style.display = 'none';
-        document.getElementById('outfits-content').style.display = 'block';
-        document.getElementById('outfits-trip-name').textContent = trip.destination?.split(',')[0] || 'My Trip';
-        document.getElementById('outfits-trip-dates').textContent = trip.dates || '';
+        const outfitsEmpty = document.getElementById('outfits-empty');
+        const outfitsContent = document.getElementById('outfits-content');
+        if (outfitsEmpty) outfitsEmpty.style.display = 'none';
+        if (outfitsContent) outfitsContent.style.display = 'block';
+        const outfitsTripName = document.getElementById('outfits-trip-name');
+        if (outfitsTripName) outfitsTripName.textContent = trip.destination?.split(',')[0] || 'My Trip';
+        const outfitsTripDates = document.getElementById('outfits-trip-dates');
+        if (outfitsTripDates) outfitsTripDates.textContent = trip.dates || '';
 
       } catch(e) { console.error('loadScreenData error:', e); }
     } else {
-      // No trip — show empty states
-      document.getElementById('home-no-trip').style.display = 'block';
-      document.getElementById('home-trip-card').style.display = 'none';
-      document.getElementById('trips-empty').style.display = 'block';
-      document.getElementById('trips-content').style.display = 'none';
-      document.getElementById('outfits-empty').style.display = 'block';
-      document.getElementById('outfits-content').style.display = 'none';
+      console.log('No trip found in localStorage');
+      // Show empty states with working buttons
+      const noTrip = document.getElementById('home-no-trip');
+      const tripCard = document.getElementById('home-trip-card');
+      if (noTrip) noTrip.style.display = 'block';
+      if (tripCard) tripCard.style.display = 'none';
+      const tripsEmpty = document.getElementById('trips-empty');
+      const tripsContent = document.getElementById('trips-content');
+      if (tripsEmpty) tripsEmpty.style.display = 'flex';
+      if (tripsContent) tripsContent.style.display = 'none';
+      const outfitsEmpty = document.getElementById('outfits-empty');
+      const outfitsContent = document.getElementById('outfits-content');
+      if (outfitsEmpty) outfitsEmpty.style.display = 'flex';
+      if (outfitsContent) outfitsContent.style.display = 'none';
+      const wellnessEmpty = document.getElementById('wellness-empty');
+      const wellnessContent = document.getElementById('wellness-content');
+      if (wellnessEmpty) wellnessEmpty.style.display = 'flex';
+      if (wellnessContent) wellnessContent.style.display = 'none';
+      const profilesEmpty = document.getElementById('profiles-empty');
+      const profilesContent = document.getElementById('profiles-content');
+      if (profilesEmpty) profilesEmpty.style.display = 'flex';
+      if (profilesContent) profilesContent.style.display = 'none';
     }
   }
 
