@@ -331,8 +331,8 @@
 
     <div class="home-banner">
       <div>
-        <h3 id="home-greeting">Welcome 👋</h3>
-        <p id="home-subgreeting">Let's get you set up for your first trip!</p>
+        <h3>Welcome back, Sarah 👋</h3>
+        <p>Your next trip is in 12 days — let's get packing!</p>
       </div>
     </div>
 
@@ -340,41 +340,31 @@
       <h2>Overview</h2>
     </div>
     <div class="stat-row">
-      <div class="stat-box"><div class="num" id="stat-trips">0</div><div class="lbl">Active trips</div></div>
-      <div class="stat-box"><div class="num" id="stat-packed">0</div><div class="lbl">Items packed</div></div>
-      <div class="stat-box"><div class="num" id="stat-outfits">0</div><div class="lbl">Outfits set</div></div>
+      <div class="stat-box"><div class="num">1</div><div class="lbl">Active trip</div></div>
+      <div class="stat-box"><div class="num">24</div><div class="lbl">Items packed</div></div>
+      <div class="stat-box"><div class="num">3</div><div class="lbl">Outfits set</div></div>
     </div>
 
     <div class="section-head">
       <h2>Current trip</h2>
       <a onclick="switchScreen('trips')">View all</a>
     </div>
-
-    <!-- Empty state — shown to new users -->
-    <div id="home-no-trip" class="card" style="margin: 0 16px; text-align:center; padding: 32px 24px;">
-      <div style="font-size:40px; margin-bottom:12px;">🧳</div>
-      <div style="font-family:var(--font-display); font-size:20px; font-weight:600; margin-bottom:8px;">No trips yet</div>
-      <div style="font-size:14px; color:var(--ink-light); margin-bottom:20px; line-height:1.6;">Add your first trip and start planning your packing list, outfits and more.</div>
-      <button class="btn btn-primary" onclick="openModal('modal-add-trip')">+ Add your first trip</button>
-    </div>
-
-    <!-- Trip card — shown when user has a trip -->
-    <div id="home-trip-card" style="display:none;">
-      <div class="trip-hero" onclick="switchScreen('trips')">
-        <div class="hero-bg" id="home-trip-bg"></div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-          <h3 id="home-trip-name">My Trip</h3>
-          <div class="trip-dates" id="home-trip-dates"></div>
-          <div class="trip-meta">
-            <div class="trip-meta-item"><span class="label">Flight</span><span class="value" id="home-trip-flight">—</span></div>
-            <div class="trip-meta-item"><span class="label">Hotel</span><span class="value" id="home-trip-hotel">—</span></div>
-            <div class="trip-meta-item"><span class="label">People</span><span class="value" id="home-trip-people">—</span></div>
-          </div>
+    <div class="trip-hero" onclick="switchScreen('trips')">
+      <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h3>Barcelona, Spain</h3>
+        <div class="trip-dates">14 July – 21 July 2025 · 7 nights</div>
+        <div class="trip-meta">
+          <div class="trip-meta-item"><span class="label">Flight</span><span class="value">IB3162</span></div>
+          <div class="trip-meta-item"><span class="label">Hotel</span><span class="value">Casa Fuster</span></div>
+          <div class="trip-meta-item"><span class="label">People</span><span class="value">4</span></div>
         </div>
       </div>
+    </div>
+
     <div class="section-head" style="margin-top:8px;">
-      <h2 id="weather-section-title">Weather</h2>
+      <h2>Barcelona weather</h2>
       <a style="font-size:12px; color:var(--ink-light);" id="weather-label">Loading...</a>
     </div>
 
@@ -389,7 +379,7 @@
 
     <!-- Climate summary card -->
     <div id="weather-climate-card" style="margin: 8px 16px 0; padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); display:none;">
-      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;">Typical climate for your trip</div>
+      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;">July in Barcelona — typical climate</div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <div class="climate-stat"><div class="climate-val" id="clim-high">—</div><div class="climate-lbl">Avg high</div></div>
         <div class="climate-stat"><div class="climate-val" id="clim-low">—</div><div class="climate-lbl">Avg low</div></div>
@@ -428,45 +418,154 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="trips-empty" class="empty">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/></svg>
+
+    <div class="trip-hero" style="margin-top:16px;">
+      <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&auto=format&fit=crop');"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h3>Barcelona, Spain</h3>
+        <div class="trip-dates">14 July – 21 July 2025 · 7 nights</div>
+        <div class="trip-meta">
+          <div class="trip-meta-item"><span class="label">Flight</span><span class="value">IB3162</span></div>
+          <div class="trip-meta-item"><span class="label">Hotel</span><span class="value">Casa Fuster</span></div>
+          <div class="trip-meta-item"><span class="label">Transfer</span><span class="value">Booked</span></div>
+        </div>
       </div>
-      <h3>No trips yet</h3>
-      <p>Add your first trip to start building your packing list, outfits and more.</p>
-      <button class="btn btn-primary" onclick="openModal('modal-add-trip')">+ Add a trip</button>
     </div>
-    <div id="trips-content" style="display:none;">
-      <div class="trip-hero" style="margin-top:16px;">
-        <div class="hero-bg" id="trips-hero-bg"></div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-          <h3 id="trips-destination">My Trip</h3>
-          <div class="trip-dates" id="trips-dates"></div>
-          <div class="trip-meta">
-            <div class="trip-meta-item"><span class="label">Flight</span><span class="value" id="trips-flight">—</span></div>
-            <div class="trip-meta-item"><span class="label">Hotel</span><span class="value" id="trips-hotel">—</span></div>
-            <div class="trip-meta-item"><span class="label">Transfer</span><span class="value" id="trips-transfer">—</span></div>
+
+    <div style="padding: 12px 16px; display:flex; gap:8px;">
+      <span class="tag tag-green">✓ Flights booked</span>
+      <span class="tag tag-green">✓ Hotel booked</span>
+      <span class="tag tag-amber">⏳ Packing 68%</span>
+    </div>
+
+    <!-- Packing progress -->
+    <div class="section-head">
+      <h2>Packing list</h2>
+      <a onclick="openModal('modal-predeparture')">Pre-departure ✈️</a>
+    </div>
+    <div style="padding: 0 16px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <span style="font-size:13px; color:var(--ink-mid);" id="pack-summary">6 of 9 packed</span>
+        <span style="font-size:13px; font-weight:500; color:var(--brand);" id="pack-pct">68%</span>
+      </div>
+      <div style="height:8px; background:var(--surface-3); border-radius:100px; overflow:hidden;">
+        <div id="pack-bar" style="height:100%; width:68%; background: linear-gradient(90deg, var(--brand), #6db3d8); border-radius:100px; transition: width 0.4s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Category: Clothing -->
+    <div class="pack-category" id="cat-clothing">
+      <div class="cat-header" onclick="toggleCategory('cat-clothing')">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="cat-icon" style="background:#e8f2f9;">👕</div>
+          <div>
+            <div style="font-size:15px; font-weight:500;">Clothing</div>
+            <div style="font-size:12px; color:var(--ink-light);" id="cat-clothing-count">2 of 4 packed</div>
           </div>
         </div>
-      </div>
-      <div class="section-head" style="margin-top:8px;">
-        <h2>Packing list</h2>
-        <a onclick="openModal('modal-predeparture')">Pre-departure ✈️</a>
-      </div>
-      <div style="padding: 0 16px 16px;">
-        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
-          <span style="font-size:13px; color:var(--ink-mid);" id="pack-summary">0 of 0 packed</span>
-          <span style="font-size:13px; font-weight:500; color:var(--brand);" id="pack-pct">0%</span>
-        </div>
-        <div style="height:8px; background:var(--surface-3); border-radius:100px; overflow:hidden;">
-          <div id="pack-bar" style="height:100%; width:0%; background: linear-gradient(90deg, var(--brand), #6db3d8); border-radius:100px; transition: width 0.4s ease;"></div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:50%;"></div></div>
+          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
-      <div id="packing-categories"></div>
-      <div style="padding: 0 16px 8px;">
-        <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-item')">+ Add item</button>
+      <div class="cat-items">
+        <div class="pack-item checked" data-id="1" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">7× T-shirts</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item checked" data-id="2" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">3× Shorts</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="3" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">1× Smart dress</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="4" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Swimwear</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
       </div>
+    </div>
+
+    <!-- Category: Essentials -->
+    <div class="pack-category" id="cat-essentials">
+      <div class="cat-header" onclick="toggleCategory('cat-essentials')">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="cat-icon" style="background:#e8f5ee;"></div>
+          <div>
+            <div style="font-size:15px; font-weight:500;">Essentials</div>
+            <div style="font-size:12px; color:var(--ink-light);" id="cat-essentials-count">2 of 4 packed</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:50%;"></div></div>
+          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="cat-items">
+        <div class="pack-item checked" data-id="5" data-reminder="true">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Passports</span>
+            <button class="remind-btn active" onclick="openReminderModal(this)" title="Reminder set"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item checked" data-id="6" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Travel insurance docs</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="7" data-reminder="true">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Phone chargers</span>
+            <button class="remind-btn active" onclick="openReminderModal(this)" title="Reminder set"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="8" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Sunscreen SPF50</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+        <div class="pack-item" data-id="9" data-reminder="false">
+          <div class="pack-item-inner">
+            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+            <span class="pack-label">Kids' medications</span>
+            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          </div>
+          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 12px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-item')">+ Add item</button>
     </div>
   </div>
 
@@ -480,31 +579,193 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="outfits-empty" class="empty">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+
+    <!-- Trip strip -->
+    <div style="padding: 14px 16px 4px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-family:var(--font-display); font-size:19px; font-weight:600;">Barcelona</div>
+        <div style="font-size:12px; color:var(--ink-light); margin-top:1px;">14 – 21 July · 7 days</div>
       </div>
-      <h3>No outfits yet</h3>
-      <p>Add a trip first, then plan your outfits day by day with weather for each day.</p>
-      <button class="btn btn-primary" onclick="openModal('modal-add-outfit')">+ Add an outfit</button>
+      <span class="tag tag-green">3 of 7 planned</span>
     </div>
-    <div id="outfits-content" style="display:none;">
-      <div style="padding: 14px 16px 4px; display:flex; align-items:center; justify-content:space-between;">
-        <div>
-          <div style="font-family:var(--font-display); font-size:19px; font-weight:600;" id="outfits-trip-name">My Trip</div>
-          <div style="font-size:12px; color:var(--ink-light); margin-top:1px;" id="outfits-trip-dates"></div>
+
+    <!-- Timeline gallery -->
+    <div style="padding: 12px 16px 8px; display:flex; flex-direction:column; gap:0;">
+
+      <!-- Day 1 — fully populated, multiple outfits per person -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Mon 14 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 28°</span>
         </div>
-        <span class="tag tag-green" id="outfits-count">0 days planned</span>
+        <div class="tl-gallery-row">
+          <!-- Sarah's outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <!-- James's outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">James</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">J</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <!-- Kids outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Kids</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">O</span><span class="mpip" style="background:rgba(74,127,165,0.8);">L</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
       </div>
-      <div id="outfits-timeline" style="padding: 12px 16px 8px; display:flex; flex-direction:column; gap:0;"></div>
-      <div class="premium-banner" style="margin-top:4px;">
-        <div class="text"><h4>Outfit archive</h4><p>Save looks from past trips</p></div>
-        <button class="btn-gold">Premium</button>
+
+      <!-- Day 2 — fully populated -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Tue 15 Jul</span>
+          </div>
+          <span class="tl-weather-pill">⛅ 25°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1509631179647-0177331693ae?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">James</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">J</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
       </div>
+
+      <!-- Day 3 — one outfit -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Wed 16 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 29°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb planned" style="background-image: url('https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=300&auto=format&fit=crop'); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 4 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Thu 17 Jul</span>
+          </div>
+          <span class="tl-weather-pill">🌤️ 27°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 5 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Fri 18 Jul</span>
+          </div>
+          <span class="tl-weather-pill">⛅ 24°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 6 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Sat 19 Jul</span>
+          </div>
+          <span class="tl-weather-pill">🌧️ 21°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 7 — empty, last -->
+      <div class="tl-gallery-day" style="border-left: 2px solid transparent;">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Sun 20 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 26°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="premium-banner" style="margin-top:4px;">
+      <div class="text"><h4>Outfit archive</h4><p>Save looks from past trips</p></div>
+      <button class="btn-gold">Premium</button>
     </div>
   </div>
 
-  <!-- ══ WELLNESS SCREEN ══ -->
+
+    <!-- ══ WELLNESS SCREEN ══ -->
   <div class="screen" id="screen-wellness">
     <div class="app-header">
       <div class="header-logo">
@@ -514,22 +775,50 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="wellness-empty" class="empty">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </div>
-      <h3>No medications yet</h3>
-      <p>Track medications and supplements for every family member, plus store allergy notes.</p>
-      <button class="btn btn-primary" onclick="openModal('modal-add-med')">+ Add medication</button>
+
+    <div class="section-head">
+      <h2>Today's tracker</h2>
+      <a>Mon 14 Jul</a>
     </div>
-    <div id="wellness-content" style="display:none;">
-      <div class="section-head"><h2>Today's tracker</h2></div>
-      <div class="card" id="med-list"></div>
-      <div class="section-head"><h2>Allergy notes</h2></div>
-      <div id="allergy-list"></div>
-      <div style="padding: 0 16px;">
-        <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-med')">+ Add medication / supplement</button>
+    <div class="card">
+      <div class="med-row">
+        <div class="med-info"><div class="name">Vitamin D</div><div class="dose">1000 IU · once daily</div></div>
+        <div class="med-toggle"><button class="time-pill taken" onclick="togglePill(this)">AM</button></div>
       </div>
+      <div class="med-row">
+        <div class="med-info"><div class="name">Omega 3</div><div class="dose">1g · twice daily</div></div>
+        <div class="med-toggle">
+          <button class="time-pill taken" onclick="togglePill(this)">AM</button>
+          <button class="time-pill" onclick="togglePill(this)">PM</button>
+        </div>
+      </div>
+      <div class="med-row">
+        <div class="med-info"><div class="name">Antihistamine</div><div class="dose">10mg · as needed</div></div>
+        <div class="med-toggle"><button class="time-pill" onclick="togglePill(this)">Take</button></div>
+      </div>
+      <div class="med-row">
+        <div class="med-info"><div class="name">SPF supplement</div><div class="dose">2 caps · with food</div></div>
+        <div class="med-toggle"><button class="time-pill" onclick="togglePill(this)">AM</button></div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2>Allergy notes</h2>
+    </div>
+    <div class="card">
+      <div style="display:flex; align-items:start; gap:12px;">
+        <div style="width:36px;height:36px;background:#fdecea;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:500;margin-bottom:4px;">Mia — Penicillin allergy</div>
+          <div style="font-size:13px;color:var(--ink-light);line-height:1.5;">Carries EpiPen. No penicillin-based antibiotics. GP: Dr Sarah Williams 020 7123 4567</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 0 16px;">
+      <button class="btn btn-outline btn-full btn-sm">+ Add medication / supplement</button>
     </div>
   </div>
 
@@ -537,41 +826,58 @@
   <div class="screen" id="screen-profiles">
     <div class="app-header">
       <div class="header-logo">
-        <span class="header-title">Family</span>
+        <span class="header-title">Profiles</span>
       </div>
       <button class="header-action" onclick="openModal('modal-add-profile')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
-    <div id="profiles-empty" class="empty">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <h3>Add your family</h3>
-      <p>Create profiles for everyone travelling with you, including children, with allergy and medical notes.</p>
-      <button class="btn btn-primary" onclick="openModal('modal-add-profile')">+ Add family member</button>
+
+    <div class="section-head">
+      <h2>Family</h2>
     </div>
-    <div id="profiles-content" style="display:none;">
-      <div class="section-head"><h2>Family</h2></div>
-      <div id="profiles-list"></div>
-      <div style="padding: 8px 16px 0;">
-        <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-profile')">+ Add family member</button>
-      </div>
-      <div class="section-head" style="margin-top:8px;"><h2>Emergency contact</h2></div>
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-weight:500;" id="emergency-name">Not set</div>
-            <div style="font-size:13px;color:var(--ink-light);margin-top:2px;" id="emergency-phone">Add an emergency contact</div>
-          </div>
-          <button class="btn btn-secondary btn-sm">Edit</button>
+
+    <div class="profile-card">
+      <div class="profile-avatar">S</div>
+      <div class="profile-info"><div class="name">Sarah</div><div class="sub">Adult · Primary account</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar">J</div>
+      <div class="profile-info"><div class="name">James</div><div class="sub">Adult · Shared profile</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar" style="font-size:15px;">O</div>
+      <div class="profile-info"><div class="name">Olivia</div><div class="sub">Child · Age 8</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar" style="font-size:15px;">L</div>
+      <div class="profile-info"><div class="name">Leo</div><div class="sub">Child · Age 5</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <div style="padding: 8px 16px 0;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-profile')">+ Add family member</button>
+    </div>
+
+    <div class="section-head" style="margin-top:8px;">
+      <h2>Emergency contact</h2>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:500;">Dr Sarah Williams (GP)</div>
+          <div style="font-size:13px;color:var(--ink-light);margin-top:2px;">020 7123 4567</div>
         </div>
+        <button class="btn btn-secondary btn-sm">Edit</button>
       </div>
     </div>
   </div>
 
   <!-- ══ AUTH — LOGIN SCREEN ══ -->
-  <div class="auth-screen" id="auth-login">
+  <div class="auth-screen active" id="auth-login">
     <div class="auth-logo">
       <div class="auth-logo-mark">
         <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
@@ -697,7 +1003,7 @@
       <div class="field"><label>Flight number</label><input type="text" placeholder="e.g. BA234"/></div>
       <div class="field"><label>Hotel / accommodation</label><input type="text" placeholder="Hotel name"/></div>
       <div class="field"><label>Transfer / car booking</label><input type="text" placeholder="Reference or details"/></div>
-      <button class="btn btn-primary btn-full" onclick="saveTrip()">Save trip</button>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-trip')">Save trip</button>
     </div>
   </div>
 
@@ -979,38 +1285,19 @@
   }
 
   function showAuth(id) {
-    document.querySelectorAll('.auth-screen').forEach(s => {
-      s.classList.remove('active');
-      s.style.display = 'none';
-    });
-    const el = document.getElementById(id);
-    if (el) { el.style.display = ''; el.classList.add('active'); }
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
   }
 
   function showApp(user) {
-    // Completely hide all auth screens
-    document.querySelectorAll('.auth-screen').forEach(s => {
-      s.classList.remove('active');
-      s.style.display = 'none';
-    });
-
+    // Hide all auth screens
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    // Update greeting with user's first name
     const firstName = user.user_metadata?.first_name || user.email.split('@')[0];
-    const greeting = document.getElementById('home-greeting');
-    const subgreeting = document.getElementById('home-subgreeting');
-    if (greeting) greeting.textContent = `Welcome back, ${firstName} 👋`;
-    if (subgreeting) subgreeting.textContent = `Your next trip is coming up — let's get packing!`;
-
-    // Switch to home
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const homeScreen = document.getElementById('screen-home');
-    if (homeScreen) homeScreen.classList.add('active');
-    const homeNav = document.getElementById('nav-home');
-    if (homeNav) homeNav.classList.add('active');
-    history.replaceState({ screen: 'home' }, '', '#home');
-
-    // Load all screen data after a short delay
-    setTimeout(() => loadScreenData(), 100);
+    const banner = document.querySelector('.home-banner h3');
+    if (banner) banner.textContent = `Welcome back, ${firstName} 👋`;
+    // Show app
+    switchScreen('home');
   }
 
   async function handleLogin() {
@@ -1075,12 +1362,8 @@
   // Check if already logged in
   const storedUser = localStorage.getItem('pa_user');
   if (storedUser) {
-    try {
-      showApp(JSON.parse(storedUser));
-      history.replaceState({ screen: 'home' }, '', '#home');
-    } catch(e) { showAuth('auth-login'); }
+    try { showApp(JSON.parse(storedUser)); } catch(e) { showAuth('auth-login'); }
   }
-  else { showAuth('auth-login'); }
 
   // Allow Enter key on login
   document.getElementById('login-password').addEventListener('keydown', e => {
@@ -1243,88 +1526,13 @@
 
   fetchWeather();
 
-  function loadScreenData() {
-    const savedTrip = localStorage.getItem('pa_current_trip');
-    let trip = null;
-    try { if (savedTrip) trip = JSON.parse(savedTrip); } catch(e) {}
-    function show(id, flex) { const el = document.getElementById(id); if (el) el.style.display = flex ? 'flex' : 'block'; }
-    function hide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
-    if (trip) {
-      const img = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
-      hide('home-no-trip'); show('home-trip-card', false);
-      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-      set('home-trip-name', trip.destination || 'My Trip');
-      set('home-trip-dates', trip.dates || '');
-      set('home-trip-flight', trip.flight || 'TBC');
-      set('home-trip-hotel', trip.hotel || 'TBC');
-      set('home-trip-people', trip.people || '1');
-      set('stat-trips', '1');
-      set('weather-section-title', (trip.destination||'Trip').split(',')[0] + ' weather');
-      const bg = document.getElementById('home-trip-bg'); if (bg) bg.style.backgroundImage = "url('" + img + "')";
-      hide('trips-empty'); show('trips-content', false);
-      set('trips-destination', trip.destination || 'My Trip');
-      set('trips-dates', trip.dates || '');
-      set('trips-flight', trip.flight || 'TBC');
-      set('trips-hotel', trip.hotel || 'TBC');
-      set('trips-transfer', trip.transfer || 'TBC');
-      const tbg = document.getElementById('trips-hero-bg'); if (tbg) tbg.style.backgroundImage = "url('" + img + "')";
-      hide('outfits-empty'); show('outfits-content', false);
-      set('outfits-trip-name', (trip.destination||'My Trip').split(',')[0]);
-      set('outfits-trip-dates', trip.dates || '');
-    } else {
-      show('home-no-trip', false); hide('home-trip-card');
-      show('trips-empty', true); hide('trips-content');
-      show('outfits-empty', true); hide('outfits-content');
-    }
-    show('wellness-empty', true); hide('wellness-content');
-    show('profiles-empty', true); hide('profiles-content');
-  }
-
-
-  function saveTrip() {
-    const destination = document.querySelector('#modal-add-trip input[placeholder="e.g. Paris, France"]').value.trim();
-    const departure = document.querySelector('#modal-add-trip input[type="date"]:first-of-type').value;
-    const returnDate = document.querySelector('#modal-add-trip input[type="date"]:last-of-type').value;
-    const flight = document.querySelector('#modal-add-trip input[placeholder="e.g. BA234"]').value.trim();
-    const hotel = document.querySelector('#modal-add-trip input[placeholder="Hotel name"]').value.trim();
-    if (!destination) { closeModalById('modal-add-trip'); return; }
-    const trip = { destination, flight, hotel, people: '1',
-      dates: departure && returnDate ? `${formatDate(departure)} – ${formatDate(returnDate)}` : '' };
-    localStorage.setItem('pa_current_trip', JSON.stringify(trip));
-    closeModalById('modal-add-trip');
-    loadScreenData();
-    const storedUser = localStorage.getItem('pa_user');
-    if (storedUser) showApp(JSON.parse(storedUser));
-  }
-
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('screen-' + name).classList.add('active');
     const navEl = document.getElementById('nav-' + name);
     if (navEl) navEl.classList.add('active');
-    loadScreenData();
-    // Push state so back button stays in app
-    history.pushState({ screen: name }, '', '#' + name);
   }
-
-  // Handle browser back button — stay in app
-  window.addEventListener('popstate', e => {
-    const screen = e.state?.screen || 'home';
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('screen-' + screen)?.classList.add('active');
-    const navEl = document.getElementById('nav-' + screen);
-    if (navEl) navEl.classList.add('active');
-    loadScreenData();
-  });
 
   function toggleCheck(el) {
     el.classList.toggle('checked');
