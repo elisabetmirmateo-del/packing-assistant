@@ -1080,6 +1080,7 @@
       history.replaceState({ screen: 'home' }, '', '#home');
     } catch(e) { showAuth('auth-login'); }
   }
+  else { showAuth('auth-login'); }
 
   // Allow Enter key on login
   document.getElementById('login-password').addEventListener('keydown', e => {
