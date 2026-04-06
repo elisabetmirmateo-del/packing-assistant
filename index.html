@@ -877,7 +877,7 @@
   </div>
 
   <!-- ══ AUTH — LOGIN SCREEN ══ -->
-  <div class="auth-screen" id="auth-login">
+  <div class="auth-screen active" id="auth-login">
     <div class="auth-logo">
       <div class="auth-logo-mark">
         <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
@@ -1379,93 +1379,6 @@
   }
 
 
-  // ── Supabase Trip Functions ──
-  const SUPA_URL = 'https://xelhqfvtminnjxwimuvu.supabase.co';
-  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlbGhxZnZ0bWlubmp4d2ltdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzYxODIsImV4cCI6MjA5MDgxMjE4Mn0.aCnMSnYdVI65r8YDhHpl8HRUEXAVpRvZ_UUxAAo-Tgw';
-
-  async function saveTrip(trip) {
-    const token = localStorage.getItem('pa_token');
-    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
-    const res = await fetch(SUPA_URL + '/rest/v1/trips', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPA_KEY,
-        'Authorization': 'Bearer ' + (token || SUPA_KEY),
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({
-        user_id: user.id,
-        destination: trip.destination,
-        start_date: trip.start_date,
-        end_date: trip.end_date,
-        flight: trip.flight,
-        hotel: trip.hotel,
-        transfer: trip.transfer,
-        people: trip.people || 1
-      })
-    });
-    return res.json();
-  }
-
-  async function loadTrips() {
-    const token = localStorage.getItem('pa_token');
-    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
-    if (!user.id) return null;
-    const res = await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=start_date.asc&limit=1', {
-      headers: {
-        'apikey': SUPA_KEY,
-        'Authorization': 'Bearer ' + (token || SUPA_KEY)
-      }
-    });
-    const data = await res.json();
-    return data && data.length > 0 ? data[0] : null;
-  }
-
-  async function updateTripDisplay() {
-    const trip = await loadTrips();
-    if (!trip) return;
-    const heroImg = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
-    const dest = trip.destination || 'My Trip';
-    const dates = trip.start_date ? formatDate(trip.start_date) + ' – ' + formatDate(trip.end_date) : '';
-
-    // Home screen
-    const homeName = document.getElementById('home-trip-name');
-    if (homeName) homeName.textContent = dest;
-    const homeDates = document.getElementById('home-trip-dates');
-    if (homeDates) homeDates.textContent = dates;
-    const homeBg = document.getElementById('home-trip-bg');
-    if (homeBg) homeBg.style.backgroundImage = "url('" + heroImg + "')";
-    const homeFlight = document.getElementById('home-trip-flight');
-    if (homeFlight) homeFlight.textContent = trip.flight || '—';
-    const homeHotel = document.getElementById('home-trip-hotel');
-    if (homeHotel) homeHotel.textContent = trip.hotel || '—';
-    const homePeople = document.getElementById('home-trip-people');
-    if (homePeople) homePeople.textContent = trip.people || '1';
-    const weatherTitle = document.getElementById('weather-section-title');
-    if (weatherTitle) weatherTitle.textContent = dest.split(',')[0] + ' weather';
-
-    // Trips screen
-    const tripDest = document.getElementById('trips-destination');
-    if (tripDest) tripDest.textContent = dest;
-    const tripDates = document.getElementById('trips-dates');
-    if (tripDates) tripDates.textContent = dates;
-    const tripFlight = document.getElementById('trips-flight');
-    if (tripFlight) tripFlight.textContent = trip.flight || '—';
-    const tripHotel = document.getElementById('trips-hotel');
-    if (tripHotel) tripHotel.textContent = trip.hotel || '—';
-    const tripTransfer = document.getElementById('trips-transfer');
-    if (tripTransfer) tripTransfer.textContent = trip.transfer || '—';
-    const tripBg = document.getElementById('trips-hero-bg');
-    if (tripBg) tripBg.style.backgroundImage = "url('" + heroImg + "')";
-
-    // Outfits screen
-    const outfitName = document.getElementById('outfits-trip-name');
-    if (outfitName) outfitName.textContent = dest.split(',')[0];
-    const outfitDates = document.getElementById('outfits-trip-dates');
-    if (outfitDates) outfitDates.textContent = dates;
-  }
-
   const TRIP = {
     name: 'Barcelona',
     lat: 41.3851,
@@ -1612,22 +1525,6 @@
   }
 
   fetchWeather();
-
-  async function handleSaveTrip() {
-    const destination = document.querySelector('#modal-add-trip input[placeholder="e.g. Paris, France"]').value.trim();
-    const departure = document.querySelectorAll('#modal-add-trip input[type="date"]')[0]?.value;
-    const returnDate = document.querySelectorAll('#modal-add-trip input[type="date"]')[1]?.value;
-    const flight = document.querySelector('#modal-add-trip input[placeholder="e.g. BA234"]').value.trim();
-    const hotel = document.querySelector('#modal-add-trip input[placeholder="Hotel name"]').value.trim();
-    const transfer = document.querySelector('#modal-add-trip input[placeholder="Reference or details"]').value.trim();
-    if (!destination) { closeModalById('modal-add-trip'); return; }
-    const btn = document.querySelector('#modal-add-trip .btn-primary');
-    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-    await saveTrip({ destination, start_date: departure, end_date: returnDate, flight, hotel, transfer });
-    closeModalById('modal-add-trip');
-    await updateTripDisplay();
-    if (btn) { btn.disabled = false; btn.textContent = 'Save trip'; }
-  }
 
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
