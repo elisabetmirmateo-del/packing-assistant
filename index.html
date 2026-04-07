@@ -1003,7 +1003,7 @@
       <div class="field"><label>Flight number</label><input type="text" placeholder="e.g. BA234"/></div>
       <div class="field"><label>Hotel / accommodation</label><input type="text" placeholder="Hotel name"/></div>
       <div class="field"><label>Transfer / car booking</label><input type="text" placeholder="Reference or details"/></div>
-      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-trip')">Save trip</button>
+      <button class="btn btn-primary btn-full" onclick="saveTrip()">Save trip</button>
     </div>
   </div>
 
@@ -1370,7 +1370,44 @@
   });
 
   // Add sign out to settings
-  function signOut() {
+const SUPA_URL = 'https://xelhqfvtminnjxwimuvu.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlbGhxZnZ0bWlubmp4d2ltdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzYxODIsImV4cCI6MjA5MDgxMjE4Mn0.aCnMSnYdVI65r8YDhHpl8HRUEXAVpRvZ_UUxAAo-Tgw';
+
+  async function saveTrip() {
+    const destination = document.querySelector('#modal-add-trip input[placeholder="e.g. Paris, France"]').value.trim();
+    const departure = document.querySelectorAll('#modal-add-trip input[type="date"]')[0]?.value;
+    const returnDate = document.querySelectorAll('#modal-add-trip input[type="date"]')[1]?.value;
+    const flight = document.querySelector('#modal-add-trip input[placeholder="e.g. BA234"]').value.trim();
+    const hotel = document.querySelector('#modal-add-trip input[placeholder="Hotel name"]').value.trim();
+    const transfer = document.querySelector('#modal-add-trip input[placeholder="Reference or details"]').value.trim();
+    if (!destination) { closeModalById('modal-add-trip'); return; }
+    const btn = document.querySelector('#modal-add-trip .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const token = localStorage.getItem('pa_token');
+    await fetch(SUPA_URL + '/rest/v1/trips', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + (token || SUPA_KEY),
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        destination: destination,
+        start_date: departure || null,
+        end_date: returnDate || null,
+        flight: flight || null,
+        hotel: hotel || null,
+        transfer: transfer || null
+      })
+    });
+    if (btn) { btn.disabled = false; btn.textContent = 'Save trip'; }
+    closeModalById('modal-add-trip');
+    alert('Trip saved! 🎉');
+  }
+    function signOut() {
     localStorage.removeItem('pa_token');
     localStorage.removeItem('pa_user');
     showAuth('auth-login');
