@@ -1298,6 +1298,7 @@
     if (banner) banner.textContent = `Welcome back, ${firstName} 👋`;
     // Show app
     switchScreen('home');
+    setTimeout(() => loadAndDisplayTrip(), 300);
   }
 
   async function handleLogin() {
@@ -1369,6 +1370,36 @@
     if (e.key === 'Enter') handleLogin();
   });
 
+  async function loadAndDisplayTrip() {
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    if (!user.id) return;
+    const res = await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=start_date.asc&limit=1', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + (token || SUPA_KEY) }
+    });
+    const data = await res.json();
+    if (!data || !data.length) return;
+    const trip = data[0];
+    const dest = trip.destination || 'My Trip';
+    const dates = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) + ' – ' + new Date(trip.end_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : '';
+    const img = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('home-trip-name', dest);
+    set('home-trip-dates', dates);
+    set('home-trip-flight', trip.flight || '—');
+    set('home-trip-hotel', trip.hotel || '—');
+    set('home-trip-people', trip.people || '1');
+    set('weather-section-title', dest.split(',')[0] + ' weather');
+    const bg = document.getElementById('home-trip-bg');
+    if (bg) bg.style.backgroundImage = "url('" + img + "')";
+    set('trips-destination', dest);
+    set('trips-dates', dates);
+    set('trips-flight', trip.flight || '—');
+    set('trips-hotel', trip.hotel || '—');
+    set('trips-transfer', trip.transfer || '—');
+    const tbg = document.getElementById('trips-hero-bg');
+    if (tbg) tbg.style.backgroundImage = "url('" + img + "')";
+  }
   // Add sign out to settings
 
 
