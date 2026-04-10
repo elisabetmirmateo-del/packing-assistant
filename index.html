@@ -1273,7 +1273,26 @@
   const SUPA_URL = 'https://xelhqfvtminnjxwimuvu.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlbGhxZnZ0bWlubmp4d2ltdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzYxODIsImV4cCI6MjA5MDgxMjE4Mn0.aCnMSnYdVI65r8YDhHpl8HRUEXAVpRvZ_UUxAAo-Tgw';
 
-  async function supaFetch(path, method, body) {
+ async function refreshToken() {
+  const refresh = localStorage.getItem('pa_refresh_token');
+  if (!refresh) return;
+  const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
+    body: JSON.stringify({ refresh_token: refresh })
+  });
+  const data = await res.json();
+  if (data.access_token) {
+    localStorage.setItem('pa_token', data.access_token);
+    localStorage.setItem('pa_refresh_token', data.refresh_token);
+    localStorage.setItem('pa_user', JSON.stringify(data.user));
+  } else {
+    signOut();
+  }
+}
+  // Auto-refresh token every 50 minutes
+  setInterval(refreshToken, 50 * 60 * 1000);
+ async function supaFetch(path, method, body) {
     const res = await fetch(`${SUPA_URL}/auth/v1${path}`, {
       method: method || 'POST',
       headers: {
@@ -1314,6 +1333,7 @@
     const data = await supaFetch('/token?grant_type=password', 'POST', { email, password });
     if (data.access_token) {
       localStorage.setItem('pa_token', data.access_token);
+      localStorage.setItem('pa_refresh_token', data.refresh_token);
       localStorage.setItem('pa_user', JSON.stringify(data.user));
       showApp(data.user);
     } else {
@@ -1449,6 +1469,7 @@
   }
     function signOut() {
     localStorage.removeItem('pa_token');
+    localStorage.removeItem('pa_refresh_token');
     localStorage.removeItem('pa_user');
     showAuth('auth-login');
     closeModalById('modal-settings');
