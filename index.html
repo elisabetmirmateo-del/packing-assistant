@@ -585,10 +585,10 @@
     <!-- Trip strip -->
     <div style="padding: 14px 16px 4px; display:flex; align-items:center; justify-content:space-between;">
       <div>
-        <div style="font-family:var(--font-display); font-size:19px; font-weight:600;">Barcelona</div>
-        <div style="font-size:12px; color:var(--ink-light); margin-top:1px;">14 – 21 July · 7 days</div>
+        <div style="font-family:var(--font-display); font-size:19px; font-weight:600;" id="strip-trip-name">—</div>
+        <div style="font-size:12px; color:var(--ink-light); margin-top:1px;" id="strip-trip-dates">—</div>
       </div>
-      <span class="tag tag-green">3 of 7 planned</span>
+      <span class="tag tag-green" id="strip-packing-count">—</span>
     </div>
 
     <!-- Timeline gallery -->
@@ -1371,6 +1371,7 @@
   document.getElementById('login-password').addEventListener('keydown', e => {
     if (e.key === 'Enter') handleLogin();
   });
+  
 
   async function loadAndDisplayTrip(user) {
     if (!user) user = JSON.parse(localStorage.getItem('pa_user') || '{}');
@@ -1399,6 +1400,8 @@
     set('trips-flight', trip.flight || '—');
     set('trips-hotel', trip.hotel || '—');
     set('trips-transfer', trip.transfer || '—');
+    set('strip-trip-name', dest);
+    set('strip-trip-dates', dates);
     const tbg = document.getElementById('trips-hero-bg');
     if (tbg) tbg.style.backgroundImage = "url('" + img + "')";
   }
@@ -1449,12 +1452,12 @@
 
 
   const TRIP = {
-    name: 'Barcelona',
-    lat: 41.3851,
-    lon: 2.1734,
-    startDate: new Date('2025-07-14'),
-    endDate: new Date('2025-07-21')
-  };
+  name: '',
+  lat: null,
+  lon: null,
+  startDate: new Date(),
+  endDate: new Date()
+};
 
   const WMO = {
     0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
