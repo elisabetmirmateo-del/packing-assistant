@@ -380,7 +380,7 @@
 
     <!-- Climate summary card -->
     <div id="weather-climate-card" style="margin: 8px 16px 0; padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); display:none;">
-      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;"> typical climate</div>
+      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;">typical climate</div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <div class="climate-stat"><div class="climate-val" id="clim-high">—</div><div class="climate-lbl">Avg high</div></div>
         <div class="climate-stat"><div class="climate-val" id="clim-low">—</div><div class="climate-lbl">Avg low</div></div>
@@ -1402,6 +1402,10 @@
     set('trips-transfer', trip.transfer || '—');
     set('strip-trip-name', dest);
     set('strip-trip-dates', dates);
+    TRIP.name = dest;
+    TRIP.startDate = trip.start_date ? new Date(trip.start_date) : new Date();
+    TRIP.endDate = trip.end_date ? new Date(trip.end_date) : new Date();
+fetchWeather();
     const tbg = document.getElementById('trips-hero-bg');
     if (tbg) tbg.style.backgroundImage = "url('" + img + "')";
   }
@@ -1449,15 +1453,14 @@
     showAuth('auth-login');
     closeModalById('modal-settings');
   }
-
-
   const TRIP = {
-  name: '',
-  lat: null,
-  lon: null,
-  startDate: new Date(),
-  endDate: new Date()
-};
+    name: '',
+    lat: null,
+    lon: null,
+    startDate: new Date(),
+    endDate: new Date()
+  };
+
 
   const WMO = {
     0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
