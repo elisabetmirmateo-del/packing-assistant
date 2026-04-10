@@ -456,114 +456,12 @@
       </div>
     </div>
 
-    <!-- Category: Clothing -->
-    <div class="pack-category" id="cat-clothing">
-      <div class="cat-header" onclick="toggleCategory('cat-clothing')">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="cat-icon" style="background:#e8f2f9;">👕</div>
-          <div>
-            <div style="font-size:15px; font-weight:500;">Clothing</div>
-            <div style="font-size:12px; color:var(--ink-light);" id="cat-clothing-count">2 of 4 packed</div>
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:50%;"></div></div>
-          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-      <div class="cat-items">
-        <div class="pack-item checked" data-id="1" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">7× T-shirts</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item checked" data-id="2" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">3× Shorts</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item" data-id="3" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">1× Smart dress</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item" data-id="4" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">Swimwear</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-      </div>
+    <!-- Dynamic packing list -->
+    <div id="packing-list-container">
+      <div style="text-align:center; padding:40px 16px; color:var(--ink-light);">Loading packing list...</div>
     </div>
-
-    <!-- Category: Essentials -->
-    <div class="pack-category" id="cat-essentials">
-      <div class="cat-header" onclick="toggleCategory('cat-essentials')">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="cat-icon" style="background:#e8f5ee;"></div>
-          <div>
-            <div style="font-size:15px; font-weight:500;">Essentials</div>
-            <div style="font-size:12px; color:var(--ink-light);" id="cat-essentials-count">2 of 4 packed</div>
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:50%;"></div></div>
-          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-      </div>
-      <div class="cat-items">
-        <div class="pack-item checked" data-id="5" data-reminder="true">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">Passports</span>
-            <button class="remind-btn active" onclick="openReminderModal(this)" title="Reminder set"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item checked" data-id="6" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">Travel insurance docs</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item" data-id="7" data-reminder="true">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">Phone chargers</span>
-            <button class="remind-btn active" onclick="openReminderModal(this)" title="Reminder set"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item" data-id="8" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">Sunscreen SPF50</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-        <div class="pack-item" data-id="9" data-reminder="false">
-          <div class="pack-item-inner">
-            <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
-            <span class="pack-label">Kids' medications</span>
-            <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-          </div>
-          <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
-        </div>
-      </div>
+    <div style="padding: 12px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-item')">+ Add item</button>
     </div>
 
     <div style="padding: 12px 16px 8px;">
@@ -1201,55 +1099,141 @@
 
 <script>
   // ── Packing list logic ──
-  function packToggle(checkEl) {
-    const item = checkEl.closest('.pack-item');
-    item.classList.toggle('checked');
-    updateProgress();
-  }
+  const DEFAULT_PACKING_LIST = [
+  { category: 'Clothing', items: ['Jeans','Trousers','Leggings','Shorts','Skirt','Dress','Smart top','Casual tops (×3)','Blouse','Jumper / Knitwear','Cardigan','Jacket / Blazer','Pyjamas','Underwear (×7)','Socks (×7)','Swimwear','Cover-up / Beach dress','Sportswear top','Sportswear leggings'] },
+  { category: 'Shoes', items: ['Everyday trainers','Sandals / Flip flops','Smart / Evening shoes','Gym / Sport shoes'] },
+  { category: 'Toiletries', items: ['Shampoo & conditioner','Body wash','Moisturiser','SPF / Sun cream','Makeup & brushes','Deodorant','Perfume','Razor','Toothbrush & toothpaste','Hair tools','Nail kit'] },
+  { category: 'Essentials', items: ['Passport','Travel insurance docs','Bank cards & cash','Phone & charger','Laptop & charger','Power adaptor','Earphones / AirPods','Portable charger'] },
+  { category: 'Health', items: ['Prescription medication','Supplements','Pain relief','Antihistamines','Plasters & first aid','Hand sanitiser'] },
+  { category: 'Extras', items: ['Sunglasses','Reusable water bottle','Book / Kindle','Snacks for travel','Travel pillow','Eye mask & earplugs'] }
+];
 
-  function updateProgress() {
-    const all = document.querySelectorAll('.pack-item');
-    const checked = document.querySelectorAll('.pack-item.checked');
-    const pct = Math.round((checked.length / all.length) * 100);
-    const bar = document.getElementById('pack-bar');
-    const pctEl = document.getElementById('pack-pct');
-    const sumEl = document.getElementById('pack-summary');
-    if (bar) bar.style.width = pct + '%';
-    if (pctEl) pctEl.textContent = pct + '%';
-    if (sumEl) sumEl.textContent = checked.length + ' of ' + all.length + ' packed';
-  }
+const CATEGORY_ICONS = { 'Clothing':'👕', 'Shoes':'👟', 'Toiletries':'🧴', 'Essentials':'📋', 'Health':'💊', 'Extras':'🎒' };
+const CATEGORY_COLORS = { 'Clothing':'#e8f2f9', 'Shoes':'#f9f0e8', 'Toiletries':'#e8f5ee', 'Essentials':'#f0e8f9', 'Health':'#fde8e8', 'Extras':'#f9f9e8' };
 
-  function toggleCategory(id) {
-    document.getElementById(id).classList.toggle('collapsed');
-  }
-
-  // Swipe to delete
-  let touchStartX = 0;
-  document.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
+async function createDefaultPackingList(tripId, userId) {
+  const token = localStorage.getItem('pa_token');
+  let sortOrder = 0;
+  const items = [];
+  DEFAULT_PACKING_LIST.forEach(cat => {
+    cat.items.forEach(label => {
+      items.push({ trip_id: tripId, user_id: userId, category: cat.category, label: label, packed: false, sort_order: sortOrder++ });
+    });
   });
-  document.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const item = e.target.closest('.pack-item');
-    if (!item) return;
-    if (dx < -50) item.classList.add('swiped');
-    if (dx > 20) item.classList.remove('swiped');
+  await fetch(SUPA_URL + '/rest/v1/packing_items', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(items)
   });
-  // Also allow click-to-reveal delete on desktop
-  document.querySelectorAll && document.addEventListener('click', e => {
-    if (!e.target.closest('.pack-item')) {
-      document.querySelectorAll('.pack-item.swiped').forEach(i => i.classList.remove('swiped'));
-    }
-  });
+}
 
-  function deletePackItem(btn) {
-    const item = btn.closest('.pack-item');
-    item.style.transition = 'opacity 0.3s, max-height 0.3s';
-    item.style.opacity = '0';
-    item.style.maxHeight = '0';
-    item.style.overflow = 'hidden';
-    setTimeout(() => { item.remove(); updateProgress(); }, 320);
-  }
+async function loadPackingList(tripId) {
+  const token = localStorage.getItem('pa_token');
+  const res = await fetch(SUPA_URL + '/rest/v1/packing_items?trip_id=eq.' + tripId + '&order=sort_order.asc', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  const items = await res.json();
+  renderPackingList(items, tripId);
+}
+
+function renderPackingList(items, tripId) {
+  const container = document.getElementById('packing-list-container');
+  if (!items || !items.length) { container.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--ink-light);">No items yet — add your first item!</div>'; return; }
+  const grouped = {};
+  items.forEach(item => { if (!grouped[item.category]) grouped[item.category] = []; grouped[item.category].push(item); });
+  let html = '';
+  Object.entries(grouped).forEach(([cat, catItems]) => {
+    const total = catItems.length;
+    const packed = catItems.filter(i => i.packed).length;
+    const pct = total ? Math.round((packed / total) * 100) : 0;
+    const icon = CATEGORY_ICONS[cat] || '📦';
+    const color = CATEGORY_COLORS[cat] || '#f0f0f0';
+    html += `<div class="pack-category" id="cat-${cat.toLowerCase()}">
+      <div class="cat-header" onclick="toggleCategory('cat-${cat.toLowerCase()}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="cat-icon" style="background:${color};">${icon}</div>
+          <div>
+            <div style="font-size:15px;font-weight:500;">${cat}</div>
+            <div style="font-size:12px;color:var(--ink-light);" id="cat-${cat.toLowerCase()}-count">${packed} of ${total} packed</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:${pct}%;"></div></div>
+          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="cat-items">`;
+    catItems.forEach(item => {
+      html += `<div class="pack-item ${item.packed ? 'checked' : ''}" data-id="${item.id}">
+        <div class="pack-item-inner">
+          <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+          <span class="pack-label">${item.label}</span>
+          <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+        </div>
+        <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  updatePackSummary();
+}
+
+async function packToggle(checkEl) {
+  const item = checkEl.closest('.pack-item');
+  const id = item.dataset.id;
+  const isPacked = item.classList.toggle('checked');
+  const token = localStorage.getItem('pa_token');
+  await fetch(SUPA_URL + '/rest/v1/packing_items?id=eq.' + id, {
+    method: 'PATCH',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ packed: isPacked })
+  });
+  updatePackSummary();
+}
+
+async function deletePackItem(btn) {
+  const item = btn.closest('.pack-item');
+  const id = item.dataset.id;
+  const token = localStorage.getItem('pa_token');
+  item.style.opacity = '0';
+  setTimeout(() => item.remove(), 300);
+  await fetch(SUPA_URL + '/rest/v1/packing_items?id=eq.' + id, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  updatePackSummary();
+}
+
+function updatePackSummary() {
+  const all = document.querySelectorAll('.pack-item');
+  const packed = document.querySelectorAll('.pack-item.checked');
+  const total = all.length;
+  const checkedCount = packed.length;
+  const pct = total ? Math.round((checkedCount / total) * 100) : 0;
+  const summaryEl = document.getElementById('pack-summary');
+  const pctEl = document.getElementById('pack-pct');
+  const barEl = document.getElementById('pack-bar');
+  const stripEl = document.getElementById('strip-packing-count');
+  if (summaryEl) summaryEl.textContent = checkedCount + ' of ' + total + ' packed';
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (barEl) barEl.style.width = pct + '%';
+  if (stripEl) stripEl.textContent = checkedCount + ' of ' + total + ' packed';
+  document.querySelectorAll('.pack-category').forEach(cat => {
+    const catAll = cat.querySelectorAll('.pack-item');
+    const catPacked = cat.querySelectorAll('.pack-item.checked');
+    const catId = cat.id;
+    const countEl = document.getElementById(catId + '-count');
+    const fillEl = cat.querySelector('.cat-mini-fill');
+    if (countEl) countEl.textContent = catPacked.length + ' of ' + catAll.length + ' packed';
+    if (fillEl) fillEl.style.width = (catAll.length ? Math.round((catPacked.length / catAll.length) * 100) : 0) + '%';
+  });
+}
+
+function toggleCategory(id) {
+  const cat = document.getElementById(id);
+  if (cat) cat.classList.toggle('collapsed');
+}
 
   // Reminder modal
   let _reminderBtn = null;
@@ -1339,6 +1323,7 @@
     } else {
       errEl.textContent = data.error_description || 'Invalid email or password.';
       errEl.classList.add('show');
+      if (trip.id) loadPackingList(trip.id);
     }
     btn.disabled = false; btn.textContent = 'Sign in';
   }
@@ -1450,7 +1435,7 @@
         'Content-Type': 'application/json',
         'apikey': SUPA_KEY,
         'Authorization': 'Bearer ' + (token || SUPA_KEY),
-        'Prefer': 'return=minimal'
+        'Prefer': 'return=representation'
       },
       body: JSON.stringify({
         user_id: user.id,
@@ -1464,6 +1449,10 @@
     });
     if (btn) { btn.disabled = false; btn.textContent = 'Save trip'; }
     closeModalById('modal-add-trip');
+    const savedTrip = await (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=created_at.desc&limit=1', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+    })).json();
+    if (savedTrip && savedTrip[0]) createDefaultPackingList(savedTrip[0].id, user.id);
     loadAndDisplayTrip();
     alert('Trip saved! 🎉');
   }
