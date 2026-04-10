@@ -1405,7 +1405,7 @@
     TRIP.name = dest;
     TRIP.startDate = trip.start_date ? new Date(trip.start_date) : new Date();
     TRIP.endDate = trip.end_date ? new Date(trip.end_date) : new Date();
-fetchWeather();
+    fetchWeather();
     const tbg = document.getElementById('trips-hero-bg');
     if (tbg) tbg.style.backgroundImage = "url('" + img + "')";
   }
