@@ -360,6 +360,7 @@
         <div id="first-trip-error" style="color:#c0392b; font-size:13px; margin-top:10px; display:none;">Please enter a destination.</div>
       </div>
     </div>
+    <div id="home-main-content">
     <div class="home-banner">
       <div>
         <h3>Welcome back, Sarah 👋</h3>
@@ -437,6 +438,8 @@
       </div>
       <button class="btn-gold">Upgrade</button>
     </div>
+  </div>
+  </div>
   </div>
 
   <!-- ══ TRIPS SCREEN ══ -->
@@ -1452,6 +1455,8 @@ async function saveFirstTrip() {
     }
     const noTrip = document.getElementById('home-no-trip');
     if (noTrip) noTrip.style.display = 'none';
+    const mainContent = document.getElementById('home-main-content');
+    if (mainContent) mainContent.style.display = 'block';
     const trip = data[0];
     const dest = trip.destination || 'My Trip';
     const dates = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) + ' – ' + new Date(trip.end_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : '';
