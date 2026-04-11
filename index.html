@@ -46,7 +46,7 @@
 
     /* ── Screens ── */
     .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; padding-bottom: calc(var(--nav-h) + 12px); -webkit-overflow-scrolling: touch; min-height: 0; }
-    .screen.active { display: flex; }
+    .screen.active { display: flex; height: 100%; }
     /* Hide bottom nav when auth is showing */
     .auth-screen.active ~ * .bottom-nav,
     body:has(.auth-screen.active) .bottom-nav { display: none; }
