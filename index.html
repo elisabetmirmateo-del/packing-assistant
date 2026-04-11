@@ -45,7 +45,7 @@
     #app { height: 100dvh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
 
     /* ── Screens ── */
-    .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; padding-bottom: calc(var(--nav-h) + 12px); -webkit-overflow-scrolling: touch; }
+    .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; padding-bottom: calc(var(--nav-h) + 12px); -webkit-overflow-scrolling: touch; min-height: 0; }
     .screen.active { display: flex; }
     /* Hide bottom nav when auth is showing */
     .auth-screen.active ~ * .bottom-nav,
