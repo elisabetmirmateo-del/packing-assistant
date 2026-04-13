@@ -389,6 +389,10 @@
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <h3 id="home-trip-name">Loading...</h3>
+        <div class="field" style="margin-bottom:20px;">
+          <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Number of travellers</label>
+          <input type="number" id="first-trip-people" placeholder="1" min="1" max="20" value="1" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+        </div>
 						<div class="trip-dates" id="home-trip-dates"></div>
 						<div class="trip-meta">
 							<div class="trip-meta-item"><span class="label">Flight</span><span class="value" id="home-trip-flight">—</span></div>
@@ -912,6 +916,7 @@
       <div class="field"><label>Flight number</label><input type="text" placeholder="e.g. BA234"/></div>
       <div class="field"><label>Hotel / accommodation</label><input type="text" placeholder="Hotel name"/></div>
       <div class="field"><label>Transfer / car booking</label><input type="text" placeholder="Reference or details"/></div>
+      <div class="field"><label>Number of travellers</label><input type="number" id="modal-trip-people" placeholder="1" min="1" max="20" value="1"/></div>
       <button class="btn btn-primary btn-full" onclick="saveTrip()">Save trip</button>
     </div>
   </div>
@@ -1443,6 +1448,7 @@ async function saveFirstTrip() {
   const end = document.getElementById('first-trip-end').value;
   const hotel = document.getElementById('first-trip-hotel').value.trim();
   const flight = document.getElementById('first-trip-flight').value.trim();
+  const people = document.getElementById('first-trip-people').value || '1';
   const errEl = document.getElementById('first-trip-error');
   const btn = document.getElementById('first-trip-btn');
   errEl.style.display = 'none';
@@ -1453,7 +1459,7 @@ async function saveFirstTrip() {
   await fetch(SUPA_URL + '/rest/v1/trips', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Prefer': 'return=representation' },
-    body: JSON.stringify({ user_id: user.id, destination: dest, start_date: start || null, end_date: end || null, hotel: hotel || null, flight: flight || null, lat: lat ? parseFloat(lat) : null, lon: lon ? parseFloat(lon) : null })
+    body: JSON.stringify({ user_id: user.id, destination: dest, start_date: start || null, end_date: end || null, hotel: hotel || null, flight: flight || null, lat: lat ? parseFloat(lat) : null, lon: lon ? parseFloat(lon) : null, people: parseInt(people) || 1 })
   });
   const savedTrip = await (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=created_at.desc&limit=1', {
     headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
@@ -1576,8 +1582,7 @@ async function saveFirstTrip() {
         transfer: transfer || null,
         lat: lat ? parseFloat(lat) : null,
         lon: lon ? parseFloat(lon) : null,
-        transfer: transfer || null,
-        lon: lon ? parseFloat(lon) : null,
+        people: parseInt(document.getElementById('modal-trip-people')?.value) || 1
       })
     });
     if (btn) { btn.disabled = false; btn.textContent = 'Save trip'; }
