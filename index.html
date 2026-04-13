@@ -963,32 +963,7 @@
   </div>
 
   <!-- Add Med -->
-  <div class="modal-overlay" id="modal-add-med" onclick="closeModal(event, 'modal-add-med')">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-handle"></div>
-      <h3>Add medication</h3>
-      <div class="field"><label>Name</label><input type="text" placeholder="e.g. Vitamin C"/></div>
-      <div class="field"><label>Dose</label><input type="text" placeholder="e.g. 500mg"/></div>
-      <div class="field"><label>Frequency</label>
-        <select>
-          <option>Once daily (AM)</option>
-          <option>Twice daily (AM + PM)</option>
-          <option>Three times daily</option>
-          <option>As needed</option>
-          <option>With food</option>
-        </select>
-      </div>
-      <div class="field"><label>Assign to</label>
-        <select>
-          <option>Sarah</option>
-          <option>James</option>
-          <option>Olivia</option>
-          <option>Leo</option>
-        </select>
-      </div>
-      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-med')">Save</button>
-    </div>
-  </div>
+ 
 <div class="modal-overlay" id="modal-add-med" onclick="closeModal(event, 'modal-add-med')">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
@@ -1770,20 +1745,20 @@ async function saveFirstTrip() {
   function fixScreenLayout() {
     const app = document.getElementById('app');
     const nav = document.querySelector('.bottom-nav');
-    // First move nav back to app if it's been misplaced
-    if (nav && nav.parentElement !== app) {
-      app.appendChild(nav);
-    }
-    // Then move screens before the nav
-    const screens = ['screen-home', 'screen-trips', 'screen-outfits', 'screen-wellness', 'screen-profiles'];
-    screens.forEach(id => {
-      const screen = document.getElementById(id);
-      if (screen && screen.parentElement !== app) {
-        app.insertBefore(screen, nav);
-      }
+    // Move nav back to app first
+    if (nav && nav.parentElement !== app) app.appendChild(nav);
+    // Move screens before nav
+    ['screen-home','screen-trips','screen-outfits','screen-wellness','screen-profiles'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.parentElement !== app) app.insertBefore(el, nav);
+    });
+    // Move modals and auth screens to app
+    ['modal-add-trip','modal-add-item','modal-add-outfit','modal-add-med','modal-add-allergy','modal-add-profile','modal-reminder','modal-predeparture','modal-settings','auth-login','auth-signup','auth-forgot'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.parentElement !== app) app.appendChild(el);
     });
   }
-    document.addEventListener('DOMContentLoaded', fixScreenLayout);
+  document.addEventListener('DOMContentLoaded', fixScreenLayout);
   fixScreenLayout();
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
