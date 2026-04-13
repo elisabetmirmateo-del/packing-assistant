@@ -707,50 +707,25 @@
     </div>
 
     <div class="section-head">
-      <h2>Today's tracker</h2>
-      <a>Mon 14 Jul</a>
+      <h2>Medications</h2>
+      <a id="wellness-trip-date" style="font-size:12px;color:var(--ink-light);">—</a>
     </div>
-    <div class="card">
-      <div class="med-row">
-        <div class="med-info"><div class="name">Vitamin D</div><div class="dose">1000 IU · once daily</div></div>
-        <div class="med-toggle"><button class="time-pill taken" onclick="togglePill(this)">AM</button></div>
-      </div>
-      <div class="med-row">
-        <div class="med-info"><div class="name">Omega 3</div><div class="dose">1g · twice daily</div></div>
-        <div class="med-toggle">
-          <button class="time-pill taken" onclick="togglePill(this)">AM</button>
-          <button class="time-pill" onclick="togglePill(this)">PM</button>
-        </div>
-      </div>
-      <div class="med-row">
-        <div class="med-info"><div class="name">Antihistamine</div><div class="dose">10mg · as needed</div></div>
-        <div class="med-toggle"><button class="time-pill" onclick="togglePill(this)">Take</button></div>
-      </div>
-      <div class="med-row">
-        <div class="med-info"><div class="name">SPF supplement</div><div class="dose">2 caps · with food</div></div>
-        <div class="med-toggle"><button class="time-pill" onclick="togglePill(this)">AM</button></div>
-      </div>
+    <div id="medications-container" class="card">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
     </div>
 
     <div class="section-head">
       <h2>Allergy notes</h2>
+      <a onclick="openModal('modal-add-allergy')" style="font-size:13px;">+ Add</a>
     </div>
-    <div class="card">
-      <div style="display:flex; align-items:start; gap:12px;">
-        <div style="width:36px;height:36px;background:#fdecea;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </div>
-        <div>
-          <div style="font-weight:500;margin-bottom:4px;">Mia — Penicillin allergy</div>
-          <div style="font-size:13px;color:var(--ink-light);line-height:1.5;">Carries EpiPen. No penicillin-based antibiotics. GP: Dr Sarah Williams 020 7123 4567</div>
-        </div>
-      </div>
+    <div id="allergies-container">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
     </div>
 
-    <div style="padding: 0 16px;">
-      <button class="btn btn-outline btn-full btn-sm">+ Add medication / supplement</button>
+    <div style="padding: 12px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-med')">+ Add medication / supplement</button>
     </div>
-  </div>
+
   <!-- ══ PROFILES SCREEN ══ -->
   <div class="screen" id="screen-profiles">
     <div class="app-header">
@@ -1012,6 +987,36 @@
         </select>
       </div>
       <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-med')">Save</button>
+    </div>
+  </div>
+<div class="modal-overlay" id="modal-add-med" onclick="closeModal(event, 'modal-add-med')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add medication</h3>
+      <div class="field"><label>Name</label><input type="text" id="med-name" placeholder="e.g. Vitamin C"/></div>
+      <div class="field"><label>Dose</label><input type="text" id="med-dose" placeholder="e.g. 500mg"/></div>
+      <div class="field"><label>Frequency</label>
+        <select id="med-frequency">
+          <option value="AM">Once daily (AM)</option>
+          <option value="AM+PM">Twice daily (AM + PM)</option>
+          <option value="AM+PM+EVE">Three times daily</option>
+          <option value="needed">As needed</option>
+          <option value="food">With food</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveMedication()" style="border-radius:var(--radius);border:none;">Save medication</button>
+    </div>
+  </div>
+
+  <!-- Add Allergy -->
+  <div class="modal-overlay" id="modal-add-allergy" onclick="closeModal(event, 'modal-add-allergy')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add allergy note</h3>
+      <div class="field"><label>Person (optional)</label><input type="text" id="allergy-person" placeholder="e.g. Mia"/></div>
+      <div class="field"><label>Allergy</label><input type="text" id="allergy-name" placeholder="e.g. Penicillin allergy"/></div>
+      <div class="field"><label>Notes</label><input type="text" id="allergy-notes" placeholder="e.g. Carries EpiPen"/></div>
+      <button class="btn btn-primary btn-full" onclick="saveAllergy()" style="border-radius:var(--radius);border:none;">Save allergy note</button>
     </div>
   </div>
 
@@ -1358,6 +1363,8 @@ function toggleCategory(id) {
       errEl.textContent = data.error_description || 'Invalid email or password.';
       errEl.classList.add('show');
       if (trip.id) loadPackingList(trip.id);
+      window._currentTripId = trip.id;
+      if (trip.id) loadWellnessData(trip.id);
     }
     btn.disabled = false; btn.textContent = 'Sign in';
   }
@@ -1772,7 +1779,110 @@ async function saveFirstTrip() {
   function toggleCheck(el) {
     el.classList.toggle('checked');
   }
+  async function loadWellnessData(tripId) {
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    if (!tripId) return;
 
+    // Set trip start date
+    const tripStart = TRIP.startDate;
+    const dateEl = document.getElementById('wellness-trip-date');
+    if (dateEl && tripStart) dateEl.textContent = tripStart.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+
+    // Load medications
+    const medRes = await fetch(SUPA_URL + '/rest/v1/medications?trip_id=eq.' + tripId + '&order=sort_order.asc', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const meds = await medRes.json();
+    renderMedications(meds);
+
+    // Load allergies
+    const allergyRes = await fetch(SUPA_URL + '/rest/v1/allergy_notes?trip_id=eq.' + tripId + '&order=created_at.asc', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const allergies = await allergyRes.json();
+    renderAllergies(allergies);
+  }
+
+  function renderMedications(meds) {
+    const container = document.getElementById('medications-container');
+    if (!meds || !meds.length) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No medications added yet.</div>';
+      return;
+    }
+    const freqLabels = { 'AM': ['AM'], 'AM+PM': ['AM', 'PM'], 'AM+PM+EVE': ['AM', 'PM', 'EVE'], 'needed': ['Take'], 'food': ['With food'] };
+    container.innerHTML = meds.map(med => {
+      const pills = (freqLabels[med.frequency] || ['Take']).map(label =>
+        `<button class="time-pill" onclick="togglePill(this, '${med.id}', '${label}')">${label}</button>`
+      ).join('');
+      return `<div class="med-row">
+        <div class="med-info">
+          <div class="name">${med.name}</div>
+          <div class="dose">${med.dose || ''}</div>
+        </div>
+        <div class="med-toggle">${pills}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderAllergies(allergies) {
+    const container = document.getElementById('allergies-container');
+    if (!allergies || !allergies.length) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No allergy notes added yet.</div>';
+      return;
+    }
+    container.innerHTML = allergies.map(a => `
+      <div class="card" style="margin:0 16px 10px;">
+        <div style="display:flex;align-items:start;gap:12px;">
+          <div style="width:36px;height:36px;background:#fdecea;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;margin-bottom:4px;">${a.person_name ? a.person_name + ' — ' : ''}${a.allergy}</div>
+            <div style="font-size:13px;color:var(--ink-light);line-height:1.5;">${a.notes || ''}</div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  async function saveMedication() {
+    const name = document.getElementById('med-name').value.trim();
+    const dose = document.getElementById('med-dose').value.trim();
+    const frequency = document.getElementById('med-frequency').value;
+    if (!name) return;
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const tripId = window._currentTripId;
+    await fetch(SUPA_URL + '/rest/v1/medications', {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ trip_id: tripId, user_id: user.id, name, dose, frequency })
+    });
+    document.getElementById('med-name').value = '';
+    document.getElementById('med-dose').value = '';
+    closeModalById('modal-add-med');
+    loadWellnessData(tripId);
+  }
+
+  async function saveAllergy() {
+    const person = document.getElementById('allergy-person').value.trim();
+    const allergy = document.getElementById('allergy-name').value.trim();
+    const notes = document.getElementById('allergy-notes').value.trim();
+    if (!allergy) return;
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const tripId = window._currentTripId;
+    await fetch(SUPA_URL + '/rest/v1/allergy_notes', {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ trip_id: tripId, user_id: user.id, person_name: person || null, allergy, notes: notes || null })
+    });
+    document.getElementById('allergy-person').value = '';
+    document.getElementById('allergy-name').value = '';
+    document.getElementById('allergy-notes').value = '';
+    closeModalById('modal-add-allergy');
+    loadWellnessData(tripId);
+  }
   function togglePill(btn) {
     btn.classList.toggle('taken');
   }
