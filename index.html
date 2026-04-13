@@ -751,7 +751,6 @@
       <button class="btn btn-outline btn-full btn-sm">+ Add medication / supplement</button>
     </div>
   </div>
-
   <!-- ══ PROFILES SCREEN ══ -->
   <div class="screen" id="screen-profiles">
     <div class="app-header">
@@ -1751,7 +1750,18 @@ async function saveFirstTrip() {
   }
 
   fetchWeather();
-
+  function fixScreenLayout() {
+    const app = document.getElementById('app');
+    const nav = document.querySelector('.bottom-nav');
+    const screens = ['screen-home', 'screen-trips', 'screen-outfits', 'screen-wellness', 'screen-profiles'];
+    screens.forEach(id => {
+      const screen = document.getElementById(id);
+      if (screen && screen.parentElement !== app) {
+        app.insertBefore(screen, nav);
+      }
+    });
+  }
+  fixScreenLayout();
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
