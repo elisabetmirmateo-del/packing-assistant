@@ -1783,6 +1783,7 @@ async function saveFirstTrip() {
       }
     });
   }
+    document.addEventListener('DOMContentLoaded', fixScreenLayout);
   fixScreenLayout();
   function switchScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
