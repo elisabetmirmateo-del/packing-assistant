@@ -744,30 +744,21 @@
     <div class="section-head">
       <h2>Family</h2>
     </div>
-
-    <div class="profile-card">
-      <div class="profile-avatar">S</div>
-      <div class="profile-info"><div class="name">Sarah</div><div class="sub">Adult · Primary account</div></div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <div id="profiles-container">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
     </div>
-    <div class="profile-card">
-      <div class="profile-avatar">J</div>
-      <div class="profile-info"><div class="name">James</div><div class="sub">Adult · Shared profile</div></div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-    <div class="profile-card">
-      <div class="profile-avatar" style="font-size:15px;">O</div>
-      <div class="profile-info"><div class="name">Olivia</div><div class="sub">Child · Age 8</div></div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-    <div class="profile-card">
-      <div class="profile-avatar" style="font-size:15px;">L</div>
-      <div class="profile-info"><div class="name">Leo</div><div class="sub">Child · Age 5</div></div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-
     <div style="padding: 8px 16px 0;">
       <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-profile')">+ Add family member</button>
+    </div>
+    <div class="section-head" style="margin-top:8px;">
+      <h2>Emergency contact</h2>
+    </div>
+    <div id="emergency-container">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
+    </div>
+    <div style="padding: 8px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-emergency')">+ Add emergency contact</button>
+    </div>
     </div>
 
     <div class="section-head" style="margin-top:8px;">
@@ -1006,16 +997,26 @@
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <h3>Add family member</h3>
-      <div class="field"><label>Full name</label><input type="text" placeholder="Name"/></div>
+      <div class="field"><label>Full name</label><input type="text" id="profile-name" placeholder="e.g. James"/></div>
       <div class="field"><label>Type</label>
-        <select>
-          <option>Adult</option>
-          <option>Child</option>
+        <select id="profile-type">
+          <option value="Adult">Adult</option>
+          <option value="Child">Child</option>
         </select>
       </div>
-      <div class="field"><label>Date of birth</label><input type="date"/></div>
-      <div class="field"><label>Allergy / medical notes</label><textarea placeholder="Any allergies, conditions, or medication notes..."></textarea></div>
-      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-profile')">Add member</button>
+      <button class="btn btn-primary btn-full" onclick="saveProfile()" style="border-radius:var(--radius);border:none;">Add member</button>
+    </div>
+  </div>
+
+  <!-- Add Emergency Contact -->
+  <div class="modal-overlay" id="modal-add-emergency" onclick="closeModal(event, 'modal-add-emergency')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Emergency contact</h3>
+      <div class="field"><label>Name</label><input type="text" id="emergency-name" placeholder="e.g. Dr Sarah Williams"/></div>
+      <div class="field"><label>Phone</label><input type="tel" id="emergency-phone" placeholder="e.g. 020 7123 4567"/></div>
+      <div class="field"><label>Notes (optional)</label><input type="text" id="emergency-notes" placeholder="e.g. GP, relationship"/></div>
+      <button class="btn btn-primary btn-full" onclick="saveEmergencyContact()" style="border-radius:var(--radius);border:none;">Save contact</button>
     </div>
   </div>
 
@@ -1546,6 +1547,7 @@ async function saveFirstTrip() {
     if (trip.id) loadPackingList(trip.id);
     window._currentTripId = trip.id;
     if (trip.id) loadWellnessData(trip.id);
+    loadProfiles();
   }
   // Add sign out to settings
 
@@ -1760,7 +1762,7 @@ async function saveFirstTrip() {
       if (el && el.parentElement !== app) app.insertBefore(el, nav);
     });
     // Move modals and auth screens to app
-    ['modal-add-trip','modal-add-item','modal-add-outfit','modal-add-med','modal-add-allergy','modal-add-profile','modal-reminder','modal-predeparture','modal-settings','auth-login','auth-signup','auth-forgot'].forEach(id => {
+    'modal-add-trip','modal-add-item','modal-add-outfit','modal-add-med','modal-add-allergy','modal-add-profile','modal-add-emergency','modal-reminder','modal-predeparture','modal-settings','auth-login','auth-signup','auth-forgot'
       const el = document.getElementById(id);
       if (el && el.parentElement !== app) app.appendChild(el);
     });
@@ -1778,6 +1780,92 @@ async function saveFirstTrip() {
   function toggleCheck(el) {
     el.classList.toggle('checked');
   }
+  async function loadProfiles() {
+  const token = localStorage.getItem('pa_token');
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  if (!user.id) return;
+
+  // Load profiles
+  const res = await fetch(SUPA_URL + '/rest/v1/profiles?user_id=eq.' + user.id + '&order=sort_order.asc', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  const profiles = await res.json();
+  const container = document.getElementById('profiles-container');
+  if (!profiles || !profiles.length) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No family members added yet.</div>';
+  } else {
+    container.innerHTML = profiles.map(p => `
+      <div class="profile-card">
+        <div class="profile-avatar">${p.first_name?.charAt(0) || '?'}</div>
+        <div class="profile-info">
+          <div class="name">${p.first_name} ${p.last_name || ''}</div>
+          <div class="sub">${p.type || 'Adult'}</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('');
+  }
+
+  // Load emergency contact
+  const tripId = window._currentTripId;
+  const ecContainer = document.getElementById('emergency-container');
+  if (!tripId) { ecContainer.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">Save a trip first to add emergency contacts.</div>'; return; }
+  const ecRes = await fetch(SUPA_URL + '/rest/v1/emergency_contacts?trip_id=eq.' + tripId + '&limit=1', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  const ecs = await ecRes.json();
+  if (!ecs || !ecs.length) {
+    ecContainer.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No emergency contact added yet.</div>';
+  } else {
+    const ec = ecs[0];
+    ecContainer.innerHTML = `<div class="card" style="margin:0 16px 10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:500;">${ec.name}</div>
+          <div style="font-size:13px;color:var(--ink-light);margin-top:2px;">${ec.phone || ''}${ec.notes ? ' · ' + ec.notes : ''}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+async function saveProfile() {
+  const name = document.getElementById('profile-name').value.trim();
+  const type = document.getElementById('profile-type').value;
+  if (!name) return;
+  const token = localStorage.getItem('pa_token');
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  const nameParts = name.split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(' ') || '';
+  await fetch(SUPA_URL + '/rest/v1/profiles', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ user_id: user.id, first_name: firstName, last_name: lastName, type })
+  });
+  document.getElementById('profile-name').value = '';
+  closeModalById('modal-add-profile');
+  loadProfiles();
+}
+
+async function saveEmergencyContact() {
+  const name = document.getElementById('emergency-name').value.trim();
+  const phone = document.getElementById('emergency-phone').value.trim();
+  const notes = document.getElementById('emergency-notes').value.trim();
+  if (!name) return;
+  const token = localStorage.getItem('pa_token');
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  const tripId = window._currentTripId;
+  await fetch(SUPA_URL + '/rest/v1/emergency_contacts', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ trip_id: tripId, user_id: user.id, name, phone: phone || null, notes: notes || null })
+  });
+  document.getElementById('emergency-name').value = '';
+  document.getElementById('emergency-phone').value = '';
+  document.getElementById('emergency-notes').value = '';
+  closeModalById('modal-add-emergency');
+  loadProfiles();
+}
   async function loadWellnessData(tripId) {
     const token = localStorage.getItem('pa_token');
     const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
