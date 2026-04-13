@@ -1752,12 +1752,11 @@ async function saveFirstTrip() {
   fetchWeather();
   function fixScreenLayout() {
     const app = document.getElementById('app');
-    const nav = document.querySelector('.bottom-nav');
     const screens = ['screen-home', 'screen-trips', 'screen-outfits', 'screen-wellness', 'screen-profiles'];
     screens.forEach(id => {
       const screen = document.getElementById(id);
       if (screen && screen.parentElement !== app) {
-        app.insertBefore(screen, nav);
+        app.appendChild(screen);
       }
     });
   }
