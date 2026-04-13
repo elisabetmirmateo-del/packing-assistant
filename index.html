@@ -1820,7 +1820,7 @@ async function saveFirstTrip() {
       container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No medications added yet.</div>';
       return;
     }
-    const freqLabels = { 'AM': ['AM'], 'AM+PM': ['AM', 'PM'], 'AM+PM+EVE': ['AM', 'PM', 'EVE'], 'needed': ['Take'], 'food': ['With food'] };
+    const freqLabels = { 'AM': ['AM'], 'PM': ['PM'], 'AM+PM': ['AM', 'PM'], 'AM+PM+EVE': ['AM', 'PM', 'EVE'], 'needed': ['Take'], 'food': ['With food'] };
     container.innerHTML = meds.map(med => {
       const pills = (freqLabels[med.frequency] || ['Take']).map(label =>
         `<button class="time-pill" onclick="togglePill(this, '${med.id}', '${label}')">${label}</button>`
