@@ -1536,8 +1536,10 @@ async function saveFirstTrip() {
       else countdownEl.textContent = `You're currently on your trip — enjoy! 🌍`;
     }
     TRIP.endDate = trip.end_date ? new Date(trip.end_date) : new Date();
-    fetchWeather();
-    const tbg = document.getElementById('trips-hero-bg');
+   fetchWeather();
+    if (trip.id) loadPackingList(trip.id);
+    window._currentTripId = trip.id;
+    if (trip.id) loadWellnessData(trip.id);
   }
   // Add sign out to settings
 
