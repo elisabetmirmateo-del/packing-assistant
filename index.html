@@ -1517,7 +1517,18 @@ async function saveFirstTrip() {
     const trip = data[0];
     const dest = trip.destination || 'My Trip';
     const dates = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) + ' – ' + new Date(trip.end_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : '';
-    const img = fetchDestinationPhoto(dest).catch(() => 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop');
+    const fallbackImg = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+    fetchDestinationPhoto(dest).then(img => {
+      const bg = document.getElementById('home-trip-bg');
+      const tbg = document.getElementById('trips-hero-bg');
+      if (bg) bg.style.backgroundImage = "url('" + (img || fallbackImg) + "')";
+      if (tbg) tbg.style.backgroundImage = "url('" + (img || fallbackImg) + "')";
+    }).catch(() => {
+      const bg = document.getElementById('home-trip-bg');
+      const tbg = document.getElementById('trips-hero-bg');
+      if (tbg) tbg.style.backgroundImage = "url('" + fallbackImg + "')";
+    });
+    const img = fallbackImg;
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('home-trip-name', dest);
     set('home-trip-dates', dates);
@@ -1526,7 +1537,6 @@ async function saveFirstTrip() {
     set('home-trip-people', trip.people || '1');
     set('weather-section-title', dest.split(',')[0] + ' weather');
     const bg = document.getElementById('home-trip-bg');
-    if (bg) bg.style.backgroundImage = "url('" + img + "')";
     set('trips-destination', dest);
     set('trips-dates', dates);
     set('trips-flight', trip.flight || '—');
@@ -1552,7 +1562,6 @@ async function saveFirstTrip() {
     TRIP.endDate = trip.end_date ? new Date(trip.end_date) : new Date();
     fetchWeather();
     const tbg = document.getElementById('trips-hero-bg');
-    if (tbg) tbg.style.backgroundImage = "url('" + img + "')";
   }
   // Add sign out to settings
 
