@@ -1770,6 +1770,11 @@ async function saveFirstTrip() {
   function fixScreenLayout() {
     const app = document.getElementById('app');
     const nav = document.querySelector('.bottom-nav');
+    // First move nav back to app if it's been misplaced
+    if (nav && nav.parentElement !== app) {
+      app.appendChild(nav);
+    }
+    // Then move screens before the nav
     const screens = ['screen-home', 'screen-trips', 'screen-outfits', 'screen-wellness', 'screen-profiles'];
     screens.forEach(id => {
       const screen = document.getElementById(id);
