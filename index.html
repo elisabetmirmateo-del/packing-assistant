@@ -336,7 +336,10 @@
       <div style="width:100%; background:var(--surface-2); border-radius:var(--radius); padding:20px; text-align:left;">
         <div class="field" style="margin-bottom:16px;">
           <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Destination</label>
-          <input type="text" id="first-trip-dest" placeholder="e.g. Mallorca, Spain" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+          <input type="text" id="first-trip-dest" placeholder="e.g. Mallorca, Spain" autocomplete="off" oninput="searchLocation('first-trip-dest', 'first-trip-suggestions', 'first-trip-lat', 'first-trip-lon')" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+          <input type="hidden" id="first-trip-lat"/>
+          <input type="hidden" id="first-trip-lon"/>
+          <div id="first-trip-suggestions" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:4px; display:none;"></div>
         </div>
         <div style="display:flex; gap:12px; margin-bottom:16px;">
           <div class="field" style="flex:1;">
@@ -922,7 +925,12 @@
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <h3>New trip</h3>
-      <div class="field"><label>Destination</label><input type="text" placeholder="e.g. Paris, France"/></div>
+      <div class="field"><label>Destination</label>
+      <input type="text" id="modal-trip-dest" placeholder="e.g. Paris, France" autocomplete="off" oninput="searchLocation('modal-trip-dest', 'modal-trip-suggestions', 'modal-trip-lat', 'modal-trip-lon')"/>
+      <input type="hidden" id="modal-trip-lat"/>
+      <input type="hidden" id="modal-trip-lon"/>
+      <div id="modal-trip-suggestions" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:4px; display:none;"></div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="field"><label>Departure</label><input type="date"/></div>
         <div class="field"><label>Return</label><input type="date"/></div>
@@ -1403,9 +1411,38 @@ function toggleCategory(id) {
   document.getElementById('login-password').addEventListener('keydown', e => {
     if (e.key === 'Enter') handleLogin();
   });
-  
+  let _locationTimer = null;
+  async function searchLocation(inputId, suggestionsId, latId, lonId) {
+  const input = document.getElementById(inputId);
+  const suggestions = document.getElementById(suggestionsId);
+  const query = input.value.trim();
+  clearTimeout(_locationTimer);
+  if (query.length < 3) { suggestions.style.display = 'none'; return; }
+  _locationTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`);
+      const data = await res.json();
+      if (!data.length) { suggestions.style.display = 'none'; return; }
+      suggestions.innerHTML = data.map(p => `
+        <div onclick="selectLocation('${p.display_name.replace(/'/g, '&#39;')}', ${p.lat}, ${p.lon}, '${inputId}', '${suggestionsId}', '${latId}', '${lonId}')"
+          style="padding:10px 12px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--border);">
+          ${p.display_name}
+        </div>`).join('');
+      suggestions.style.display = 'block';
+    } catch(e) { suggestions.style.display = 'none'; }
+  }, 400);
+}
+
+function selectLocation(name, lat, lon, inputId, suggestionsId, latId, lonId) {
+  document.getElementById(inputId).value = name;
+  document.getElementById(latId).value = lat;
+  document.getElementById(lonId).value = lon;
+  document.getElementById(suggestionsId).style.display = 'none';
+}
 async function saveFirstTrip() {
   const dest = document.getElementById('first-trip-dest').value.trim();
+  const lat = document.getElementById('first-trip-lat').value || null;
+  const lon = document.getElementById('first-trip-lon').value || null;
   const start = document.getElementById('first-trip-start').value;
   const end = document.getElementById('first-trip-end').value;
   const hotel = document.getElementById('first-trip-hotel').value.trim();
@@ -1420,7 +1457,7 @@ async function saveFirstTrip() {
   await fetch(SUPA_URL + '/rest/v1/trips', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Prefer': 'return=representation' },
-    body: JSON.stringify({ user_id: user.id, destination: dest, start_date: start || null, end_date: end || null, hotel: hotel || null, flight: flight || null })
+    body: JSON.stringify({ user_id: user.id, destination: dest, start_date: start || null, end_date: end || null, hotel: hotel || null, flight: flight || null, lat: lat ? parseFloat(lat) : null, lon: lon ? parseFloat(lon) : null })
   });
   const savedTrip = await (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=created_at.desc&limit=1', {
     headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
@@ -1478,6 +1515,8 @@ async function saveFirstTrip() {
     set('strip-trip-name', dest);
     set('strip-trip-dates', dates);
     TRIP.name = dest;
+    TRIP.lat = trip.lat || null;
+    TRIP.lon = trip.lon || null;
     TRIP.startDate = trip.start_date ? new Date(trip.start_date) : new Date();
     TRIP.endDate = trip.end_date ? new Date(trip.end_date) : new Date();
     fetchWeather();
@@ -1488,7 +1527,9 @@ async function saveFirstTrip() {
 
 
   async function saveTrip() {
-    const destination = document.querySelector('#modal-add-trip input[placeholder="e.g. Paris, France"]').value.trim();
+    const destination = document.getElementById('modal-trip-dest').value.trim();
+    const lat = document.getElementById('modal-trip-lat').value || null;
+    const lon = document.getElementById('modal-trip-lon').value || null;
     const departure = document.querySelectorAll('#modal-add-trip input[type="date"]')[0]?.value;
     const returnDate = document.querySelectorAll('#modal-add-trip input[type="date"]')[1]?.value;
     const flight = document.querySelector('#modal-add-trip input[placeholder="e.g. BA234"]').value.trim();
@@ -1515,6 +1556,8 @@ async function saveFirstTrip() {
         flight: flight || null,
         hotel: hotel || null,
         transfer: transfer || null
+        lat: lat ? parseFloat(lat) : null,
+        lon: lon ? parseFloat(lon) : null,
       })
     });
     if (btn) { btn.disabled = false; btn.textContent = 'Save trip'; }
