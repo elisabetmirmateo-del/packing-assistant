@@ -1862,7 +1862,8 @@ async function saveFirstTrip() {
     if (!name) return;
     const token = localStorage.getItem('pa_token');
     const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
-    const tripId = window._currentTripId;
+    const tripId = window._currentTripId || (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=start_date.asc&limit=1', { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token } }).then(r => r.json()).then(d => d[0]?.id));
+    window._currentTripId = tripId;
     await fetch(SUPA_URL + '/rest/v1/medications', {
       method: 'POST',
       headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
