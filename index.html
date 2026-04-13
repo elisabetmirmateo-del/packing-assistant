@@ -1555,7 +1555,9 @@ async function saveFirstTrip() {
         end_date: returnDate || null,
         flight: flight || null,
         hotel: hotel || null,
-        transfer: transfer || null
+        transfer: transfer || null,
+        lat: lat ? parseFloat(lat) : null,
+        lon: lon ? parseFloat(lon) : null,
         transfer: transfer || null,
         lon: lon ? parseFloat(lon) : null,
       })
