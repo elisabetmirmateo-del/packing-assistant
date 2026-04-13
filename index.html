@@ -1412,6 +1412,19 @@ function toggleCategory(id) {
     if (e.key === 'Enter') handleLogin();
   });
   let _locationTimer = null;
+  async function fetchDestinationPhoto(destination) {
+  try {
+    const query = destination.split(',')[0].trim();
+    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=1&client_id=HLzRfwKsxXDvzhUMBwytMYwDQbDoy5fUfkS05sbZI90`);
+    const data = await res.json();
+    if (data.results && data.results.length > 0) {
+      return data.results[0].urls.regular;
+    }
+  } catch(e) {
+    console.log('Photo fetch failed:', e);
+  }
+  return 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+  }
   async function searchLocation(inputId, suggestionsId, latId, lonId) {
   const input = document.getElementById(inputId);
   const suggestions = document.getElementById(suggestionsId);
@@ -1497,7 +1510,7 @@ async function saveFirstTrip() {
     const trip = data[0];
     const dest = trip.destination || 'My Trip';
     const dates = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) + ' – ' + new Date(trip.end_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : '';
-    const img = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+    const img = await fetchDestinationPhoto(dest);
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('home-trip-name', dest);
     set('home-trip-dates', dates);
