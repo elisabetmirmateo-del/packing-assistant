@@ -976,6 +976,11 @@
           <option value="food">With food</option>
         </select>
       </div>
+      <div class="field"><label>Assign to (optional)</label>
+        <select id="med-profile">
+          <option value="">Not assigned</option>
+        </select>
+      </div>
       <button class="btn btn-primary btn-full" onclick="saveMedication()" style="border-radius:var(--radius);border:none;">Save medication</button>
     </div>
   </div>
@@ -1877,7 +1882,7 @@ async function saveEmergencyContact() {
     if (dateEl && tripStart) dateEl.textContent = tripStart.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
 
     // Load medications
-    const medRes = await fetch(SUPA_URL + '/rest/v1/medications?trip_id=eq.' + tripId + '&order=sort_order.asc', {
+    const medRes = await fetch(SUPA_URL + '/rest/v1/medications?trip_id=eq.' + tripId + '&order=sort_order.asc&select=*,profile:profiles(first_name,last_name)', {
       headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
     });
     const meds = await medRes.json();
@@ -1903,7 +1908,7 @@ async function saveEmergencyContact() {
         `<button class="time-pill" onclick="togglePill(this, '${med.id}', '${label}')">${label}</button>`
       ).join('');
       return `<div class="med-row">
-        <div class="med-info">
+        <div class="dose">${med.dose || ''}${med.profile ? ' · ' + med.profile.first_name : ''}</div>
           <div class="name">${med.name}</div>
           <div class="dose">${med.dose || ''}</div>
         </div>
@@ -1944,7 +1949,7 @@ async function saveEmergencyContact() {
     await fetch(SUPA_URL + '/rest/v1/medications', {
       method: 'POST',
       headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ trip_id: tripId, user_id: user.id, name, dose, frequency })
+      body: JSON.stringify({ trip_id: tripId, user_id: user.id, name, dose, frequency, profile_id: document.getElementById('med-profile')?.value || null })
     });
     document.getElementById('med-name').value = '';
     document.getElementById('med-dose').value = '';
@@ -1977,6 +1982,18 @@ async function saveEmergencyContact() {
 
   function openModal(id) {
     document.getElementById(id).classList.add('open');
+    if (id === 'modal-add-med') {
+      const token = localStorage.getItem('pa_token');
+      const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+      const sel = document.getElementById('med-profile');
+      if (!sel || !user.id) return;
+      fetch(SUPA_URL + '/rest/v1/profiles?user_id=eq.' + user.id + '&order=sort_order.asc', {
+        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+      }).then(r => r.json()).then(profiles => {
+        sel.innerHTML = '<option value="">Not assigned</option>' +
+          profiles.map(p => `<option value="${p.id}">${p.first_name}${p.last_name ? ' ' + p.last_name : ''}</option>`).join('');
+      });
+    }
   }
 
   function closeModal(event, id) {
