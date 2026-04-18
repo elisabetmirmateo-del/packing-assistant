@@ -1901,9 +1901,9 @@ async function saveEmergencyContact() {
         `<button class="time-pill" onclick="togglePill(this, '${med.id}', '${label}')">${label}</button>`
       ).join('');
       return `<div class="med-row">
-        <div class="dose">${med.dose || ''}${med.profile ? ' · ' + med.profile.first_name : ''}</div>
+        <div class="med-info">
           <div class="name">${med.name}</div>
-          <div class="dose">${med.dose || ''}</div>
+          <div class="dose">${med.dose || ''}${med.profile ? ' · ' + med.profile.first_name : ''}</div>
         </div>
         <div class="med-toggle">${pills}</div>
       </div>`;
