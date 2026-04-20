@@ -1759,6 +1759,10 @@ async function saveFirstTrip() {
       const el = document.getElementById(id);
       if (el && el.parentElement !== app) app.insertBefore(el, nav);
     });
+    // Move weather block back inside home-main-content if leaked
+    const weatherBlock = document.getElementById('weather-forecast-block');
+    const homeMain = document.getElementById('home-main-content');
+    if (weatherBlock && homeMain && weatherBlock.parentElement !== homeMain) homeMain.appendChild(weatherBlock);
     // Move modals and auth screens to app
     ['modal-add-trip','modal-add-item','modal-add-outfit','modal-add-med','modal-add-allergy','modal-add-profile','modal-add-emergency','modal-reminder','modal-predeparture','modal-settings','auth-login','auth-signup','auth-forgot'].forEach(id => {
       const el = document.getElementById(id);
