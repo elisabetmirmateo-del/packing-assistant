@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#ffffff"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <title>Packing Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #4A7FA5;
+      --brand-dark: #2f5f80;
+      --brand-light: #e8f2f9;
+      --brand-mid: #c5dff0;
+      --ink: #1a1a1a;
+      --ink-mid: #555555;
+      --ink-light: #888888;
+      --surface: #ffffff;
+      --surface-2: #f7f7f6;
+      --surface-3: #f0efee;
+      --border: #e5e3e0;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+      --nav-h: 72px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--surface-2);
+      font-family: var(--font-body);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── App shell ── */
+    #app { height: 100dvh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+    /* ── Screens ── */
+    .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; padding-bottom: calc(var(--nav-h) + 12px); -webkit-overflow-scrolling: touch; min-height: 0; }
+    .screen.active { display: flex; height: 100%; }
+    /* Hide bottom nav when auth is showing */
+    .auth-screen.active ~ * .bottom-nav,
+    body:has(.auth-screen.active) .bottom-nav { display: none; }
+
+    /* ── Header ── */
+    .app-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+    .header-logo { display: flex; align-items: center; gap: 10px; }
+    .header-logo .logo-mark { width: 32px; height: 32px; background: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .header-logo .logo-mark svg { width: 20px; height: 20px; fill: white; }
+    .header-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+    .header-action { width: 36px; height: 36px; border: none; background: var(--surface-3); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink-mid); transition: background 0.2s; }
+    .header-action:hover { background: var(--brand-light); color: var(--brand); }
+
+    /* ── Bottom nav ── */
+    .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; padding: 0 8px; padding-bottom: env(safe-area-inset-bottom); z-index: 20; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border: none; background: none; cursor: pointer; color: var(--ink-light); transition: color 0.2s; border-radius: var(--radius-sm); }
+    .nav-item.active { color: var(--brand); }
+    .nav-item svg { width: 22px; height: 22px; }
+    .nav-item span { font-size: 10px; font-weight: 500; letter-spacing: 0.03em; }
+    .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--brand); opacity: 0; transition: opacity 0.2s; margin-top: -2px; }
+    .nav-item.active .nav-dot { opacity: 1; }
+
+    /* ── Cards ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin: 0 16px 12px; transition: box-shadow 0.2s; }
+    .card:hover { box-shadow: var(--shadow); }
+    .card-sm { padding: 14px 16px; border-radius: var(--radius-sm); }
+
+    /* ── Section header ── */
+    .section-head { padding: 20px 24px 8px; display: flex; align-items: baseline; justify-content: space-between; }
+    .section-head h2 { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); }
+    .section-head a { font-size: 13px; color: var(--brand); cursor: pointer; font-weight: 500; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 100px; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: var(--brand); color: white; }
+    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(74,127,165,0.35); }
+    .btn-secondary { background: var(--surface-3); color: var(--ink); }
+    .btn-secondary:hover { background: var(--brand-light); color: var(--brand); }
+    .btn-outline { background: transparent; color: var(--brand); border: 1.5px solid var(--brand-mid); }
+    .btn-outline:hover { background: var(--brand-light); }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 8px 16px; font-size: 13px; }
+
+    /* ── Tags / badges ── */
+    .tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+    .tag-blue { background: var(--brand-light); color: var(--brand-dark); }
+    .tag-green { background: #e8f5ee; color: #2d7a4f; }
+    .tag-amber { background: #fef3e2; color: #a05e1a; }
+    .tag-red { background: #fdecea; color: #a33030; }
+
+    /* ── Form elements ── */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-mid); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .field input, .field select, .field textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; color: var(--ink); background: var(--surface); transition: border-color 0.2s; outline: none; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brand); }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* ── Empty state ── */
+    .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 32px; text-align: center; gap: 12px; }
+    .empty-icon { width: 64px; height: 64px; background: var(--brand-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .empty-icon svg { width: 28px; height: 28px; color: var(--brand); }
+    .empty h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+    .empty p { font-size: 14px; color: var(--ink-light); line-height: 1.6; max-width: 240px; }
+
+    /* ── Checklist ── */
+    .check-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .check-item:last-child { border-bottom: none; }
+    .check-box { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .check-item.checked .check-box { background: var(--brand); border-color: var(--brand); }
+    .check-item.checked .check-box svg { display: block; }
+    .check-box svg { display: none; width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+    .check-item.checked .check-label { text-decoration: line-through; color: var(--ink-light); }
+    .check-label { font-size: 15px; }
+
+    /* ── Weather strip ── */
+    .weather-strip { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 4px; scrollbar-width: none; }
+    .weather-strip::-webkit-scrollbar { display: none; }
+    .weather-day { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; min-width: 56px; }
+    .weather-day.today { background: var(--brand-light); }
+    .weather-day .wd { font-size: 11px; color: var(--ink-light); font-weight: 500; }
+    .weather-day .wi { font-size: 20px; }
+    .weather-day .wt { font-size: 13px; font-weight: 500; }
+
+    /* ── Trip hero ── */
+    .trip-hero { margin: 16px 16px 0; border-radius: var(--radius); background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); padding: 24px; color: white; position: relative; overflow: hidden; min-height: 160px; }
+    .trip-hero .hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: var(--radius); }
+    .trip-hero .hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(20,40,60,0.72) 0%, rgba(10,25,45,0.85) 100%); border-radius: var(--radius); }
+    .trip-hero .hero-content { position: relative; z-index: 2; }
+    .trip-hero::before { display: none; }
+    .trip-hero::after { display: none; }
+    .trip-hero h3 { font-family: var(--font-display); font-size: 26px; font-weight: 600; margin-bottom: 4px; }
+    .trip-hero .trip-dates { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
+    .trip-meta { display: flex; gap: 20px; }
+    .trip-meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .trip-meta-item .label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; }
+    .trip-meta-item .value { font-size: 15px; font-weight: 500; }
+
+    /* ── Outfit grid ── */
+    .outfit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
+    .outfit-card { border-radius: var(--radius-sm); overflow: hidden; border: 1.5px solid var(--border); cursor: pointer; transition: border-color 0.2s; }
+    .outfit-card:hover { border-color: var(--brand); }
+    .outfit-img { width: 100%; aspect-ratio: 3/4; background: var(--surface-3); display: flex; align-items: center; justify-content: center; }
+    .outfit-img svg { width: 32px; height: 32px; color: var(--ink-light); }
+    .outfit-info { padding: 10px; }
+    .outfit-info .day { font-size: 11px; color: var(--ink-light); font-weight: 500; }
+    .outfit-info .name { font-size: 13px; font-weight: 500; }
+
+    /* ── Profile card ── */
+    .profile-card { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: 0 16px 10px; cursor: pointer; transition: border-color 0.2s; }
+    .profile-card:hover { border-color: var(--brand); }
+    .profile-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--brand-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--brand); flex-shrink: 0; }
+    .profile-info { flex: 1; }
+    .profile-info .name { font-size: 16px; font-weight: 500; }
+    .profile-info .sub { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
+
+    /* ── Wellness ── */
+    .med-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .med-row:last-child { border-bottom: none; }
+    .med-info .name { font-size: 15px; font-weight: 500; }
+    .med-info .dose { font-size: 13px; color: var(--ink-light); }
+    .med-toggle { display: flex; gap: 6px; }
+    .time-pill { padding: 5px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border); color: var(--ink-light); cursor: pointer; transition: all 0.2s; }
+    .time-pill.taken { background: var(--brand); border-color: var(--brand); color: white; }
+
+    /* ── Home screen ── */
+    .home-banner { margin: 16px 16px 0; padding: 20px; border-radius: var(--radius); background: var(--brand-light); border: 1px solid var(--brand-mid); display: flex; align-items: center; gap: 16px; }
+    .home-banner svg { width: 36px; height: 36px; color: var(--brand); flex-shrink: 0; }
+    .home-banner h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--brand-dark); }
+    .home-banner p { font-size: 13px; color: var(--brand-dark); opacity: 0.8; margin-top: 2px; }
+
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 0 16px; }
+    .stat-box { background: var(--surface-2); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; }
+    .stat-box .num { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--brand); line-height: 1; }
+    .stat-box .lbl { font-size: 11px; color: var(--ink-light); margin-top: 4px; font-weight: 500; }
+
+    /* ── Premium upsell ── */
+    .premium-banner { margin: 0 16px 12px; padding: 16px 20px; border-radius: var(--radius); background: linear-gradient(135deg, #1a1a2e 0%, #2f3b6e 100%); color: white; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .premium-banner .text h4 { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+    .premium-banner .text p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+    .premium-banner .btn-gold { background: #c9a84c; color: #1a1a2e; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; }
+
+    /* ── Modal ── */
+    .modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: none; align-items: flex-end; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px; }
+    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+    .modal h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 20px; }
+
+    /* ── Outfit gallery timeline ── */
+    .tl-gallery-day { position: relative; padding-left: 28px; padding-bottom: 20px; border-left: 2px solid var(--border); margin-left: 6px; }
+    .tl-gallery-day:last-child { border-left: 2px solid transparent; }
+    .tl-day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .tl-day-label { display: flex; align-items: center; gap: 8px; }
+    .tl-day-dot { width: 12px; height: 12px; border-radius: 50%; position: absolute; left: -7px; top: 2px; }
+    .tl-day-dot.filled { background: var(--brand); box-shadow: 0 0 0 3px var(--brand-light); }
+    .tl-day-dot.empty { background: var(--surface); border: 2px solid var(--border); }
+    .tl-day-name { font-size: 13px; font-weight: 500; color: var(--ink-mid); }
+    .tl-weather-pill { font-size: 12px; background: var(--surface-2); border-radius: 100px; padding: 3px 10px; color: var(--ink-light); }
+
+    .tl-gallery-row { display: flex; gap: 10px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .tl-gallery-row::-webkit-scrollbar { display: none; }
+
+    .tl-gallery-thumb { width: 110px; height: 140px; border-radius: 12px; flex-shrink: 0; position: relative; overflow: hidden; cursor: pointer; }
+
+    .tl-gallery-thumb.planned { box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+    .tl-thumb-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .tl-thumb-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%); padding: 10px 8px 8px; border-radius: 0 0 12px 12px; }
+    .tl-thumb-name { font-size: 11px; font-weight: 600; color: white; margin-bottom: 5px; }
+    .tl-thumb-members { display: flex; gap: 3px; }
+    .mpip { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); color: white; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.4); }
+    .tl-thumb-edit { position: absolute; top: 7px; right: 7px; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); border: none; border-radius: 6px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+    .tl-gallery-thumb.planned:hover .tl-thumb-edit { opacity: 1; }
+
+    .tl-gallery-thumb.add { width: 80px; height: 140px; border: 2px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--ink-light); font-size: 11px; font-weight: 500; transition: all 0.2s; background: var(--surface-2); }
+    .tl-gallery-thumb.add:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+    .tl-gallery-thumb.add-primary { width: 100%; height: 80px; border: 2px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-light); font-size: 13px; font-weight: 500; transition: all 0.2s; background: var(--surface-2); }
+    .tl-gallery-thumb.add-primary:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+
+    .pack-category { margin: 0 16px 10px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .cat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; background: var(--surface); transition: background 0.15s; }
+    .cat-header:hover { background: var(--surface-2); }
+    .cat-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .cat-mini-bar { width: 48px; height: 5px; background: var(--surface-3); border-radius: 100px; overflow: hidden; }
+    .cat-mini-fill { height: 100%; background: var(--brand); border-radius: 100px; transition: width 0.4s; }
+    .cat-chevron { transition: transform 0.25s; color: var(--ink-light); }
+    .pack-category.collapsed .cat-chevron { transform: rotate(-90deg); }
+    .cat-items { border-top: 1px solid var(--border); }
+    .pack-category.collapsed .cat-items { display: none; }
+
+    .pack-item { position: relative; overflow: hidden; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .pack-item:last-child { border-bottom: none; }
+    .pack-item-inner { display: flex; align-items: center; gap: 12px; padding: 13px 16px; position: relative; z-index: 2; background: var(--surface); transition: transform 0.25s ease; }
+    .pack-item.swiped .pack-item-inner { transform: translateX(-72px); }
+    .swipe-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 64px; background: #e84040; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; z-index: 1; }
+
+    .pack-check { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+    .pack-check svg { display: none; width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+    .pack-item.checked .pack-check { background: var(--brand); border-color: var(--brand); }
+    .pack-item.checked .pack-check svg { display: block; }
+    .pack-label { flex: 1; font-size: 15px; transition: all 0.2s; }
+    .pack-item.checked .pack-label { text-decoration: line-through; color: var(--ink-light); }
+
+    .remind-btn { background: none; border: none; padding: 4px; cursor: pointer; color: var(--ink-light); display: flex; align-items: center; border-radius: 6px; transition: all 0.2s; }
+    .remind-btn:hover { background: var(--brand-light); color: var(--brand); }
+    .remind-btn.active { color: var(--brand); }
+
+    /* ── Pre-departure modal ── */
+    .predep-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .predep-item:last-child { border-bottom: none; }
+    .predep-check { width: 26px; height: 26px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.2s; }
+    .predep-check svg { display: none; width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+    .predep-item.checked .predep-check { background: #2d7a4f; border-color: #2d7a4f; }
+    .predep-item.checked .predep-check svg { display: block; }
+    .predep-item.checked .predep-label { text-decoration: line-through; color: var(--ink-light); }
+    .predep-label { flex: 1; font-size: 15px; }
+    .predep-time { font-size: 11px; color: var(--brand); font-weight: 500; background: var(--brand-light); padding: 3px 8px; border-radius: 100px; white-space: nowrap; }
+
+
+    /* ── Climate summary ── */
+    .climate-stat { flex: 1; min-width: 60px; text-align: center; background: var(--surface); border-radius: var(--radius-sm); padding: 10px 8px; border: 1px solid var(--border); }
+    .climate-val { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--brand); line-height: 1; }
+    .climate-lbl { font-size: 11px; color: var(--ink-light); margin-top: 4px; font-weight: 500; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── Auth screens ── */
+    .auth-screen { position: absolute; inset: 0; background: var(--surface); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
+    .auth-screen.active { display: flex; }
+    .auth-logo { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 40px; }
+    .auth-logo-mark { width: 64px; height: 64px; background: var(--brand); border-radius: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .auth-logo-mark svg { width: 36px; height: 36px; fill: white; }
+    .auth-logo h1 { font-family: var(--font-display); font-size: 28px; font-weight: 600; }
+    .auth-logo p { font-size: 14px; color: var(--ink-light); text-align: center; }
+    .auth-form { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px; }
+    .auth-input-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .auth-input-wrap label { font-size: 12px; font-weight: 500; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.04em; }
+    .auth-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; color: var(--ink); background: var(--surface); outline: none; transition: border-color 0.2s; }
+    .auth-input:focus { border-color: var(--brand); }
+    .auth-btn { width: 100%; padding: 14px; background: var(--brand); color: white; border: none; border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
+    .auth-btn:hover { background: var(--brand-dark); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .auth-divider { text-align: center; font-size: 13px; color: var(--ink-light); margin: 4px 0; }
+    .auth-link { color: var(--brand); cursor: pointer; font-weight: 500; background: none; border: none; font-family: var(--font-body); font-size: 13px; }
+    .auth-link:hover { text-decoration: underline; }
+    .auth-error { background: #fdecea; color: #a33030; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); text-align: center; display: none; }
+    .auth-error.show { display: block; }
+    .auth-success { background: #e8f5ee; color: #2d7a4f; font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); text-align: center; display: none; }
+    .auth-success.show { display: block; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .screen.active > * { animation: fadeUp 0.3s ease both; }
+    .screen.active > *:nth-child(2) { animation-delay: 0.05s; }
+    .screen.active > *:nth-child(3) { animation-delay: 0.1s; }
+    .screen.active > *:nth-child(4) { animation-delay: 0.15s; }
+    .screen.active > *:nth-child(5) { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ HOME SCREEN ══ -->
+  <div class="screen active" id="screen-home">
+    <div class="app-header">
+      <div class="header-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+        </div>
+        <span class="header-title">Packing Assistant</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-settings')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </button>
+    </div>
+  <!-- First trip setup screen -->
+    <div id="home-no-trip" style="display:none; flex:1; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px; text-align:center;">
+      <div style="font-size:48px; margin-bottom:20px;">🧳</div>
+      <h2 style="font-family:var(--font-display); font-size:24px; font-weight:600; margin-bottom:8px;">Plan your first trip</h2>
+      <p style="font-size:14px; color:var(--ink-mid); line-height:1.6; margin-bottom:32px;">Add your destination and dates to get started with your packing list.</p>
+      <div style="width:100%; background:var(--surface-2); border-radius:var(--radius); padding:20px; text-align:left;">
+        <div class="field" style="margin-bottom:16px;">
+          <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Destination</label>
+          <input type="text" id="first-trip-dest" placeholder="e.g. Mallorca, Spain" autocomplete="off" oninput="searchLocation('first-trip-dest', 'first-trip-suggestions', 'first-trip-lat', 'first-trip-lon')" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+          <input type="hidden" id="first-trip-lat"/>
+          <input type="hidden" id="first-trip-lon"/>
+          <div id="first-trip-suggestions" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:4px; display:none;"></div>
+        </div>
+        <div style="display:flex; gap:12px; margin-bottom:16px;">
+          <div class="field" style="flex:1;">
+            <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Departure</label>
+            <input type="date" id="first-trip-start" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+          </div>
+          <div class="field" style="flex:1;">
+            <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Return</label>
+            <input type="date" id="first-trip-end" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:16px;">
+          <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Hotel (optional)</label>
+          <input type="text" id="first-trip-hotel" placeholder="Hotel name" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+        </div>
+        <div class="field" style="margin-bottom:20px;">
+          <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Flight number (optional)</label>
+          <input type="text" id="first-trip-flight" placeholder="e.g. BA234" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+        </div>
+        <div class="field" style="margin-bottom:20px;">
+          <label style="font-size:12px; font-weight:500; color:var(--ink-mid); text-transform:uppercase; letter-spacing:0.04em;">Number of travellers</label>
+          <input type="number" id="first-trip-people" placeholder="1" min="1" max="20" value="1" style="width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:15px; background:var(--surface);"/>
+        </div>
+        <button class="btn-primary" id="first-trip-btn" onclick="saveFirstTrip()" style="width:100%; padding:14px; font-size:15px; border-radius:var(--radius); border:none;">Save my trip</button>
+        <div id="first-trip-error" style="color:#c0392b; font-size:13px; margin-top:10px; display:none;">Please enter a destination.</div>
+      </div>
+    </div>
+    <div id="home-main-content">
+    <div class="home-banner">
+      <div>
+        <h3>Welcome back, Sarah 👋</h3>
+        <p id="home-countdown">Your next trip is loading...</p>
+      </div>
+    </div>
+
+    <div class="section-head" style="padding-top:20px;">
+      <h2>Overview</h2>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="num">1</div><div class="lbl">Active trip</div></div>
+      <div class="stat-box"><div class="num">24</div><div class="lbl">Items packed</div></div>
+      <div class="stat-box"><div class="num">3</div><div class="lbl">Outfits set</div></div>
+    </div>
+
+    <div class="section-head">
+      <h2>Current trip</h2>
+      <a onclick="switchScreen('trips')">View all</a>
+    </div>
+    <div class="trip-hero" onclick="switchScreen('trips')">
+      <div class="hero-bg" id="home-trip-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+       <h3 id="home-trip-name">Loading...</h3>
+        <div class="trip-dates" id="home-trip-dates"></div>
+        <div class="trip-meta">
+          <div class="trip-meta-item"><span class="label">Flight</span><span class="value" id="home-trip-flight">—</span></div>
+          <div class="trip-meta-item"><span class="label">Hotel</span><span class="value" id="home-trip-hotel">—</span></div>
+          <div class="trip-meta-item"><span class="label">People</span><span class="value" id="home-trip-people">—</span></div>
+        </div>
+      </div>
+
+    <div class="section-head" style="margin-top:8px;">
+      <h2 id="weather-section-title">Weather</h2>
+      <a style="font-size:12px; color:var(--ink-light);" id="weather-label">Loading...</a>
+    </div>
+
+    <!-- Forecast strip (shows when trip is within 16 days) -->
+    <div id="weather-forecast-block">
+      <div class="weather-strip" id="weather-strip">
+        <div class="weather-day today" style="opacity:0.4;">
+          <div class="wd">—</div><div class="wi" style="font-size:13px;">…</div><div class="wt">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Climate summary card -->
+    <div id="weather-climate-card" style="margin: 8px 16px 0; padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); display:none;">
+      <div style="font-size:12px; font-weight:500; color:var(--ink-light); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;" id="clim-label">typical climate</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="climate-stat"><div class="climate-val" id="clim-high">—</div><div class="climate-lbl">Avg high</div></div>
+        <div class="climate-stat"><div class="climate-val" id="clim-low">—</div><div class="climate-lbl">Avg low</div></div>
+        <div class="climate-stat"><div class="climate-val" id="clim-rain">—</div><div class="climate-lbl">Rain days</div></div>
+        <div class="climate-stat"><div class="climate-val" id="clim-sun">—</div><div class="climate-lbl">Sun hours</div></div>
+      </div>
+      <div id="clim-advice" style="margin-top:12px; font-size:13px; color:var(--ink-mid); line-height:1.6; padding:10px 12px; background:var(--brand-light); border-radius:var(--radius-sm);"></div>
+    </div>
+
+    <!-- Packing advice based on weather -->
+    <div id="weather-pack-tip" style="margin: 8px 16px 0; display:none;">
+      <div style="display:flex; align-items:start; gap:10px; padding:12px 14px; background:#fef3e2; border-radius:var(--radius-sm); border:1px solid #fde5b5;">
+        <span style="font-size:18px;">🧳</span>
+        <div style="font-size:13px; color:#7a4a0a; line-height:1.5;" id="pack-tip-text"></div>
+      </div>
+    </div>
+
+
+    <div style="height:8px;"></div>
+    <div class="premium-banner">
+      <div class="text">
+        <h4>Upgrade to Premium</h4>
+        <p>Insurance reports, outfit archive & more</p>
+      </div>
+      <button class="btn-gold">Upgrade</button>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- ══ TRIPS SCREEN ══ -->
+  <div class="screen" id="screen-trips">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Trips</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-trip')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div class="trip-hero" style="margin-top:16px;">
+      <div class="hero-bg" id="trips-hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h3 id="trips-destination">Loading...</h3>
+						<div class="trip-dates" id="trips-dates"></div>
+						<div class="trip-meta">
+							<div class="trip-meta-item"><span class="label">Flight</span><span class="value" id="trips-flight">—</span></div>
+							<div class="trip-meta-item"><span class="label">Hotel</span><span class="value" id="trips-hotel">—</span></div>
+							<div class="trip-meta-item"><span class="label">Transfer</span><span class="value" id="trips-transfer">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 12px 16px; display:flex; gap:8px;">
+      <span class="tag tag-green">✓ Flights booked</span>
+      <span class="tag tag-green">✓ Hotel booked</span>
+      <span class="tag tag-amber">⏳ Packing 68%</span>
+    </div>
+
+    <!-- Packing progress -->
+    <div class="section-head">
+      <h2>Packing list</h2>
+      <a onclick="openModal('modal-predeparture')">Pre-departure ✈️</a>
+    </div>
+    <div style="padding: 0 16px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <span style="font-size:13px; color:var(--ink-mid);" id="pack-summary">6 of 9 packed</span>
+        <span style="font-size:13px; font-weight:500; color:var(--brand);" id="pack-pct">68%</span>
+      </div>
+      <div style="height:8px; background:var(--surface-3); border-radius:100px; overflow:hidden;">
+        <div id="pack-bar" style="height:100%; width:68%; background: linear-gradient(90deg, var(--brand), #6db3d8); border-radius:100px; transition: width 0.4s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Dynamic packing list -->
+    <div id="packing-list-container">
+      <div style="text-align:center; padding:40px 16px; color:var(--ink-light);">Loading packing list...</div>
+    </div>
+    <div style="padding: 12px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-item')">+ Add item</button>
+    </div>
+  </div>
+  <!-- ══ OUTFITS SCREEN ══ -->
+  <div class="screen" id="screen-outfits">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Outfits</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-outfit')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- Trip strip -->
+    <div style="padding: 14px 16px 4px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-family:var(--font-display); font-size:19px; font-weight:600;" id="strip-trip-name">—</div>
+        <div style="font-size:12px; color:var(--ink-light); margin-top:1px;" id="strip-trip-dates">—</div>
+      </div>
+      <span class="tag tag-green" id="strip-packing-count">—</span>
+    </div>
+
+    <!-- Timeline gallery -->
+    <div style="padding: 12px 16px 8px; display:flex; flex-direction:column; gap:0;">
+
+      <!-- Day 1 — fully populated, multiple outfits per person -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Mon 14 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 28°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <!-- Sarah's outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url(https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&auto=format&fit=crop); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <!-- James's outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url(https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=300&auto=format&fit=crop); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">James</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">J</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <!-- Kids outfit -->
+          <div class="tl-gallery-thumb planned" style="background-image: url(https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=300&auto=format&fit=crop); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Kids</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">O</span><span class="mpip" style="background:rgba(74,127,165,0.8);">L</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 2 — fully populated -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Tue 15 Jul</span>
+          </div>
+          <span class="tl-weather-pill">⛅ 25°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb planned" style="background-image: url(https://images.unsplash.com/photo-1509631179647-0177331693ae?w=300&auto=format&fit=crop); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb planned" style="background-image: url(https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=300&auto=format&fit=crop); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">James</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">J</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 3 — one outfit -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot filled"></div>
+            <span class="tl-day-name">Wed 16 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 29°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb planned" style="background-image: url(https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=300&auto=format&fit=crop); background-size:cover; background-position:center top;">
+            <div class="tl-thumb-overlay">
+              <div class="tl-thumb-name">Sarah</div>
+              <div class="tl-thumb-members"><span class="mpip" style="background:rgba(74,127,165,0.8);">S</span></div>
+            </div>
+            <button class="tl-thumb-edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+          <div class="tl-gallery-thumb add" onclick="openModal('modal-add-outfit')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 4 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Thu 17 Jul</span>
+          </div>
+          <span class="tl-weather-pill">🌤️ 27°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 5 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Fri 18 Jul</span>
+          </div>
+          <span class="tl-weather-pill">⛅ 24°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 6 — empty -->
+      <div class="tl-gallery-day">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Sat 19 Jul</span>
+          </div>
+          <span class="tl-weather-pill">🌧️ 21°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 7 — empty, last -->
+      <div class="tl-gallery-day" style="border-left: 2px solid transparent;">
+        <div class="tl-day-header">
+          <div class="tl-day-label">
+            <div class="tl-day-dot empty"></div>
+            <span class="tl-day-name" style="color:var(--ink-light);">Sun 20 Jul</span>
+          </div>
+          <span class="tl-weather-pill">☀️ 26°</span>
+        </div>
+        <div class="tl-gallery-row">
+          <div class="tl-gallery-thumb add-primary" onclick="openModal('modal-add-outfit')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add outfit</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="premium-banner" style="margin-top:4px;">
+      <div class="text"><h4>Outfit archive</h4><p>Save looks from past trips</p></div>
+      <button class="btn-gold">Premium</button>
+    </div>
+  </div>
+
+
+    <!-- ══ WELLNESS SCREEN ══ -->
+  <div class="screen" id="screen-wellness">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Wellness</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-med')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div class="section-head">
+      <h2>Medications</h2>
+      <a id="wellness-trip-date" style="font-size:12px;color:var(--ink-light);">—</a>
+    </div>
+    <div id="medications-container" class="card">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
+    </div>
+
+    <div class="section-head">
+      <h2>Allergy notes</h2>
+      <a onclick="openModal('modal-add-allergy')" style="font-size:13px;">+ Add</a>
+    </div>
+    <div id="allergies-container">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
+    </div>
+
+    <div style="padding: 12px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-med')">+ Add medication / supplement</button>
+    </div>
+
+  <!-- ══ PROFILES SCREEN ══ -->
+  <div class="screen" id="screen-profiles">
+    <div class="app-header">
+      <div class="header-logo">
+        <span class="header-title">Profiles</span>
+      </div>
+      <button class="header-action" onclick="openModal('modal-add-profile')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div class="section-head">
+      <h2>Family</h2>
+    </div>
+    <div id="profiles-container">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
+    </div>
+    <div style="padding: 8px 16px 0;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-profile')">+ Add family member</button>
+    </div>
+    <div class="section-head" style="margin-top:8px;">
+      <h2>Emergency contact</h2>
+    </div>
+    <div id="emergency-container">
+      <div style="text-align:center;padding:20px;color:var(--ink-light);">Loading...</div>
+    </div>
+    <div style="padding: 8px 16px 8px;">
+      <button class="btn btn-outline btn-full btn-sm" onclick="openModal('modal-add-emergency')">+ Add emergency contact</button>
+    </div>
+    </div>
+
+    <div class="section-head" style="margin-top:8px;">
+      <h2>Emergency contact</h2>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:500;">Dr Sarah Williams (GP)</div>
+          <div style="font-size:13px;color:var(--ink-light);margin-top:2px;">020 7123 4567</div>
+        </div>
+        <button class="btn btn-secondary btn-sm">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ AUTH — LOGIN SCREEN ══ -->
+  <div class="auth-screen active" id="auth-login">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+      </div>
+      <h1>Packing Assistant</h1>
+      <p>Sign in to your account</p>
+    </div>
+    <div class="auth-form">
+      <div id="login-error" class="auth-error"></div>
+      <div class="auth-input-wrap">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="auth-input-wrap">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="login-password" placeholder="Your password" autocomplete="current-password"/>
+      </div>
+      <button class="auth-btn" id="login-btn" onclick="handleLogin()">Sign in</button>
+      <div class="auth-divider">
+        <button class="auth-link" onclick="showAuth('auth-forgot')">Forgot password?</button>
+      </div>
+      <div class="auth-divider">Don't have an account? <button class="auth-link" onclick="showAuth('auth-signup')">Sign up</button></div>
+    </div>
+  </div>
+
+  <!-- ══ AUTH — SIGNUP SCREEN ══ -->
+  <div class="auth-screen" id="auth-signup">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+      </div>
+      <h1>Create account</h1>
+      <p>Start packing smarter today</p>
+    </div>
+    <div class="auth-form">
+      <div id="signup-error" class="auth-error"></div>
+      <div id="signup-success" class="auth-success">Check your email to confirm your account!</div>
+      <div style="display:flex; gap:12px;">
+        <div class="auth-input-wrap" style="flex:1;">
+          <label>First name</label>
+          <input class="auth-input" type="text" id="signup-firstname" placeholder="Sarah" autocomplete="given-name"/>
+        </div>
+        <div class="auth-input-wrap" style="flex:1;">
+          <label>Last name</label>
+          <input class="auth-input" type="text" id="signup-lastname" placeholder="Smith" autocomplete="family-name"/>
+        </div>
+      </div>
+      <div class="auth-input-wrap">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="auth-input-wrap">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="signup-password" placeholder="At least 8 characters" autocomplete="new-password"/>
+      </div>
+      <button class="auth-btn" id="signup-btn" onclick="handleSignup()">Create account</button>
+      <div class="auth-divider">Already have an account? <button class="auth-link" onclick="showAuth('auth-login')">Sign in</button></div>
+    </div>
+  </div>
+
+  <!-- ══ AUTH — FORGOT PASSWORD SCREEN ══ -->
+  <div class="auth-screen" id="auth-forgot">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">
+        <svg viewBox="0 0 24 24" width="36" height="36"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM9 7V5a3 3 0 0 1 6 0v2" fill="white"/></svg>
+      </div>
+      <h1>Reset password</h1>
+      <p>We'll send you a reset link</p>
+    </div>
+    <div class="auth-form">
+      <div id="forgot-error" class="auth-error"></div>
+      <div id="forgot-success" class="auth-success">Check your email for a reset link!</div>
+      <div class="auth-input-wrap">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="forgot-email" placeholder="you@example.com"/>
+      </div>
+      <button class="auth-btn" id="forgot-btn" onclick="handleForgot()">Send reset link</button>
+      <div class="auth-divider"><button class="auth-link" onclick="showAuth('auth-login')">← Back to sign in</button></div>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchScreen('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-trips" onclick="switchScreen('trips')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
+      <span>Trips</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-outfits" onclick="switchScreen('outfits')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+      <span>Outfits</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-wellness" onclick="switchScreen('wellness')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span>Wellness</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-item" id="nav-profiles" onclick="switchScreen('profiles')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Family</span>
+      <div class="nav-dot"></div>
+    </button>
+  </nav>
+
+  <!-- ══ MODALS ══ -->
+
+  <!-- Add Trip -->
+  <div class="modal-overlay" id="modal-add-trip" onclick="closeModal(event, 'modal-add-trip')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>New trip</h3>
+      <div class="field"><label>Destination</label>
+      <input type="text" id="modal-trip-dest" placeholder="e.g. Paris, France" autocomplete="off" oninput="searchLocation('modal-trip-dest', 'modal-trip-suggestions', 'modal-trip-lat', 'modal-trip-lon')"/>
+      <input type="hidden" id="modal-trip-lat"/>
+      <input type="hidden" id="modal-trip-lon"/>
+      <div id="modal-trip-suggestions" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:4px; display:none;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="field"><label>Departure</label><input type="date"/></div>
+        <div class="field"><label>Return</label><input type="date"/></div>
+      </div>
+      <div class="field"><label>Flight number</label><input type="text" placeholder="e.g. BA234"/></div>
+      <div class="field"><label>Hotel / accommodation</label><input type="text" placeholder="Hotel name"/></div>
+      <div class="field"><label>Transfer / car booking</label><input type="text" placeholder="Reference or details"/></div>
+      <div class="field"><label>Number of travellers</label><input type="number" id="modal-trip-people" placeholder="1" min="1" max="20" value="1"/></div>
+      <button class="btn btn-primary btn-full" onclick="saveTrip()">Save trip</button>
+    </div>
+  </div>
+
+  <!-- Add Item -->
+  <div class="modal-overlay" id="modal-add-item" onclick="closeModal(event, 'modal-add-item')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add packing item</h3>
+      <div class="field"><label>Item name</label><input type="text" placeholder="e.g. Sunglasses"/></div>
+      <div class="field"><label>Category</label>
+        <select>
+          <option>Clothing</option>
+          <option>Essentials</option>
+          <option>Toiletries</option>
+          <option>Kids</option>
+          <option>Electronics</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Quantity</label><input type="number" placeholder="1" min="1"/></div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-item')">Add to list</button>
+    </div>
+  </div>
+
+  <!-- Add Outfit -->
+  <div class="modal-overlay" id="modal-add-outfit" onclick="closeModal(event, 'modal-add-outfit')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add outfit</h3>
+      <div class="field"><label>Outfit name</label><input type="text" placeholder="e.g. Beach day look"/></div>
+      <div class="field"><label>Assign to day</label>
+        <select>
+          <option>Day 1 — Monday 14 Jul</option>
+          <option>Day 2 — Tuesday 15 Jul</option>
+          <option>Day 3 — Wednesday 16 Jul</option>
+          <option>Day 4 — Thursday 17 Jul</option>
+          <option>Day 5 — Friday 18 Jul</option>
+        </select>
+      </div>
+      <div class="field"><label>Photo</label>
+        <div style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:32px;text-align:center;color:var(--ink-light);cursor:pointer;" onclick="alert('In the real app, this opens your camera roll!')">
+          <div style="font-size:28px;margin-bottom:8px;">📷</div>
+          <div style="font-size:14px;">Tap to upload from camera roll</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="closeModalById('modal-add-outfit')">Save outfit</button>
+    </div>
+  </div>
+
+  <!-- Add Med -->
+ 
+<div class="modal-overlay" id="modal-add-med" onclick="closeModal(event, 'modal-add-med')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add medication</h3>
+      <div class="field"><label>Name</label><input type="text" id="med-name" placeholder="e.g. Vitamin C"/></div>
+      <div class="field"><label>Dose</label><input type="text" id="med-dose" placeholder="e.g. 500mg"/></div>
+      <div class="field"><label>Frequency</label>
+        <select id="med-frequency">
+          <option value="AM">Once daily (AM)</option>
+          <option value="PM">Once daily (PM)</option>
+          <option value="AM+PM">Twice daily (AM + PM)</option>
+          <option value="AM+PM+EVE">Three times daily</option>
+          <option value="needed">As needed</option>
+          <option value="food">With food</option>
+        </select>
+      </div>
+      <div class="field"><label>Assign to (optional)</label>
+        <select id="med-profile">
+          <option value="">Not assigned</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveMedication()" style="border-radius:var(--radius);border:none;">Save medication</button>
+    </div>
+  </div>
+
+  <!-- Add Allergy -->
+  <div class="modal-overlay" id="modal-add-allergy" onclick="closeModal(event, 'modal-add-allergy')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add allergy note</h3>
+      <div class="field"><label>Person (optional)</label><input type="text" id="allergy-person" placeholder="e.g. Mia"/></div>
+      <div class="field"><label>Allergy</label><input type="text" id="allergy-name" placeholder="e.g. Penicillin allergy"/></div>
+      <div class="field"><label>Notes</label><input type="text" id="allergy-notes" placeholder="e.g. Carries EpiPen"/></div>
+      <button class="btn btn-primary btn-full" onclick="saveAllergy()" style="border-radius:var(--radius);border:none;">Save allergy note</button>
+    </div>
+  </div>
+
+  <!-- Add Profile -->
+  <div class="modal-overlay" id="modal-add-profile" onclick="closeModal(event, 'modal-add-profile')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Add family member</h3>
+      <div class="field"><label>Full name</label><input type="text" id="profile-name" placeholder="e.g. James"/></div>
+      <div class="field"><label>Type</label>
+        <select id="profile-type">
+          <option value="Adult">Adult</option>
+          <option value="Child">Child</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveProfile()" style="border-radius:var(--radius);border:none;">Add member</button>
+    </div>
+  </div>
+
+  <!-- Add Emergency Contact -->
+  <div class="modal-overlay" id="modal-add-emergency" onclick="closeModal(event, 'modal-add-emergency')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Emergency contact</h3>
+      <div class="field"><label>Name</label><input type="text" id="emergency-name" placeholder="e.g. Dr Sarah Williams"/></div>
+      <div class="field"><label>Phone</label><input type="tel" id="emergency-phone" placeholder="e.g. 020 7123 4567"/></div>
+      <div class="field"><label>Notes (optional)</label><input type="text" id="emergency-notes" placeholder="e.g. GP, relationship"/></div>
+      <button class="btn btn-primary btn-full" onclick="saveEmergencyContact()" style="border-radius:var(--radius);border:none;">Save contact</button>
+    </div>
+  </div>
+
+  <!-- Set Reminder Modal -->
+  <div class="modal-overlay" id="modal-reminder" onclick="closeModal(event, 'modal-reminder')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Set reminder</h3>
+      <p style="font-size:14px; color:var(--ink-mid); margin-bottom:20px; margin-top:-10px;">You'll get a notification to check this item is packed before you leave.</p>
+      <div class="field">
+        <label>Item</label>
+        <input type="text" id="reminder-item-name" readonly style="background:var(--surface-2); color:var(--ink-mid);"/>
+      </div>
+      <div class="field">
+        <label>Remind me</label>
+        <select id="reminder-timing">
+          <option>2 hours before departure</option>
+          <option>4 hours before departure</option>
+          <option>The evening before</option>
+          <option>Morning of departure</option>
+          <option>1 day before</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Departure time</label>
+        <input type="time" value="10:30"/>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveReminder()">Set reminder 🔔</button>
+    </div>
+  </div>
+
+  <!-- Pre-departure Modal -->
+  <div class="modal-overlay" id="modal-predeparture" onclick="closeModal(event, 'modal-predeparture')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <h3 style="margin-bottom:0;">Pre-departure ✈️</h3>
+        <span class="tag tag-amber">Flight 10:30 AM</span>
+      </div>
+      <p style="font-size:13px; color:var(--ink-mid); margin-bottom:20px;">Double-check these items before you leave the house.</p>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Passports</span>
+        <span class="predep-time">2h before</span>
+      </div>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Phone chargers</span>
+        <span class="predep-time">2h before</span>
+      </div>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Kids' medications</span>
+        <span class="predep-time">Evening before</span>
+      </div>
+      <div class="predep-item" onclick="this.classList.toggle('checked')">
+        <div class="predep-check"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+        <span class="predep-label">Travel insurance docs</span>
+        <span class="predep-time">Morning of</span>
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary btn-full" onclick="closeModalById('modal-predeparture')">All checked — let's go! 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="modal-overlay" id="modal-settings" onclick="closeModal(event, 'modal-settings')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <h3>Settings</h3>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;">Account</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;">Notifications</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;">Privacy & data</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <span style="font-size:15px;color:var(--brand);">Upgrade to Premium ✨</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div style="padding:14px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="signOut()">
+          <span style="font-size:15px;color:#a33030;">Sign out</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+        <div style="font-size:12px;color:var(--ink-light);">Packing Assistant v1.0 · Made with ♥ in London</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Packing list logic ──
+  const DEFAULT_PACKING_LIST = [
+  { category: 'Clothing', items: ['Jeans','Trousers','Leggings','Shorts','Skirt','Dress','Smart top','Casual tops (×3)','Blouse','Jumper / Knitwear','Cardigan','Jacket / Blazer','Pyjamas','Underwear (×7)','Socks (×7)','Swimwear','Cover-up / Beach dress','Sportswear top','Sportswear leggings'] },
+  { category: 'Shoes', items: ['Everyday trainers','Sandals / Flip flops','Smart / Evening shoes','Gym / Sport shoes'] },
+  { category: 'Toiletries', items: ['Shampoo & conditioner','Body wash','Moisturiser','SPF / Sun cream','Makeup & brushes','Deodorant','Perfume','Razor','Toothbrush & toothpaste','Hair tools','Nail kit'] },
+  { category: 'Essentials', items: ['Passport','Travel insurance docs','Bank cards & cash','Phone & charger','Laptop & charger','Power adaptor','Earphones / AirPods','Portable charger'] },
+  { category: 'Health', items: ['Prescription medication','Supplements','Pain relief','Antihistamines','Plasters & first aid','Hand sanitiser'] },
+  { category: 'Extras', items: ['Sunglasses','Reusable water bottle','Book / Kindle','Snacks for travel','Travel pillow','Eye mask & earplugs'] }
+];
+
+const CATEGORY_ICONS = { 'Clothing':'👕', 'Shoes':'👟', 'Toiletries':'🧴', 'Essentials':'📋', 'Health':'💊', 'Extras':'🎒' };
+const CATEGORY_COLORS = { 'Clothing':'#e8f2f9', 'Shoes':'#f9f0e8', 'Toiletries':'#e8f5ee', 'Essentials':'#f0e8f9', 'Health':'#fde8e8', 'Extras':'#f9f9e8' };
+
+async function createDefaultPackingList(tripId, userId) {
+  const token = localStorage.getItem('pa_token');
+  let sortOrder = 0;
+  const items = [];
+  DEFAULT_PACKING_LIST.forEach(cat => {
+    cat.items.forEach(label => {
+      items.push({ trip_id: tripId, user_id: userId, category: cat.category, label: label, packed: false, sort_order: sortOrder++ });
+    });
+  });
+  await fetch(SUPA_URL + '/rest/v1/packing_items', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(items)
+  });
+}
+
+async function loadPackingList(tripId) {
+  const token = localStorage.getItem('pa_token');
+  const res = await fetch(SUPA_URL + '/rest/v1/packing_items?trip_id=eq.' + tripId + '&order=sort_order.asc', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  const items = await res.json();
+  renderPackingList(items, tripId);
+}
+
+function renderPackingList(items, tripId) {
+  const container = document.getElementById('packing-list-container');
+  if (!items || !items.length) { container.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--ink-light);">No items yet — add your first item!</div>'; return; }
+  const grouped = {};
+  items.forEach(item => { if (!grouped[item.category]) grouped[item.category] = []; grouped[item.category].push(item); });
+  let html = '';
+  Object.entries(grouped).forEach(([cat, catItems]) => {
+    const total = catItems.length;
+    const packed = catItems.filter(i => i.packed).length;
+    const pct = total ? Math.round((packed / total) * 100) : 0;
+    const icon = CATEGORY_ICONS[cat] || '📦';
+    const color = CATEGORY_COLORS[cat] || '#f0f0f0';
+    html += `<div class="pack-category" id="cat-${cat.toLowerCase()}">
+      <div class="cat-header" onclick="toggleCategory('cat-${cat.toLowerCase()}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="cat-icon" style="background:${color};">${icon}</div>
+          <div>
+            <div style="font-size:15px;font-weight:500;">${cat}</div>
+            <div style="font-size:12px;color:var(--ink-light);" id="cat-${cat.toLowerCase()}-count">${packed} of ${total} packed</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:${pct}%;"></div></div>
+          <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="cat-items">`;
+    catItems.forEach(item => {
+      html += `<div class="pack-item ${item.packed ? 'checked' : ''}" data-id="${item.id}">
+        <div class="pack-item-inner">
+          <div class="pack-check" onclick="packToggle(this)"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1"/></svg></div>
+          <span class="pack-label">${item.label}</span>
+          <button class="remind-btn" onclick="openReminderModal(this)" title="Set reminder"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+        </div>
+        <div class="swipe-delete" onclick="deletePackItem(this)">🗑</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  updatePackSummary();
+}
+
+async function packToggle(checkEl) {
+  const item = checkEl.closest('.pack-item');
+  const id = item.dataset.id;
+  const isPacked = item.classList.toggle('checked');
+  const token = localStorage.getItem('pa_token');
+  await fetch(SUPA_URL + '/rest/v1/packing_items?id=eq.' + id, {
+    method: 'PATCH',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ packed: isPacked })
+  });
+  updatePackSummary();
+}
+
+async function deletePackItem(btn) {
+  const item = btn.closest('.pack-item');
+  const id = item.dataset.id;
+  const token = localStorage.getItem('pa_token');
+  item.style.opacity = '0';
+  setTimeout(() => item.remove(), 300);
+  await fetch(SUPA_URL + '/rest/v1/packing_items?id=eq.' + id, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  updatePackSummary();
+}
+
+function updatePackSummary() {
+  const all = document.querySelectorAll('.pack-item');
+  const packed = document.querySelectorAll('.pack-item.checked');
+  const total = all.length;
+  const checkedCount = packed.length;
+  const pct = total ? Math.round((checkedCount / total) * 100) : 0;
+  const summaryEl = document.getElementById('pack-summary');
+  const pctEl = document.getElementById('pack-pct');
+  const barEl = document.getElementById('pack-bar');
+  const stripEl = document.getElementById('strip-packing-count');
+  if (summaryEl) summaryEl.textContent = checkedCount + ' of ' + total + ' packed';
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (barEl) barEl.style.width = pct + '%';
+  if (stripEl) stripEl.textContent = checkedCount + ' of ' + total + ' packed';
+  document.querySelectorAll('.pack-category').forEach(cat => {
+    const catAll = cat.querySelectorAll('.pack-item');
+    const catPacked = cat.querySelectorAll('.pack-item.checked');
+    const catId = cat.id;
+    const countEl = document.getElementById(catId + '-count');
+    const fillEl = cat.querySelector('.cat-mini-fill');
+    if (countEl) countEl.textContent = catPacked.length + ' of ' + catAll.length + ' packed';
+    if (fillEl) fillEl.style.width = (catAll.length ? Math.round((catPacked.length / catAll.length) * 100) : 0) + '%';
+  });
+}
+
+function toggleCategory(id) {
+  const cat = document.getElementById(id);
+  if (cat) cat.classList.toggle('collapsed');
+}
+
+  // Reminder modal
+  let _reminderBtn = null;
+  function openReminderModal(btn) {
+    _reminderBtn = btn;
+    const label = btn.closest('.pack-item-inner').querySelector('.pack-label').textContent;
+    document.getElementById('reminder-item-name').value = label;
+    openModal('modal-reminder');
+  }
+
+  function saveReminder() {
+    if (_reminderBtn) {
+      _reminderBtn.classList.add('active');
+      _reminderBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+      _reminderBtn.closest('.pack-item').dataset.reminder = 'true';
+    }
+    closeModalById('modal-reminder');
+  }
+
+  // ── Supabase Auth ──
+  const SUPA_URL = 'https://xelhqfvtminnjxwimuvu.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlbGhxZnZ0bWlubmp4d2ltdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzYxODIsImV4cCI6MjA5MDgxMjE4Mn0.aCnMSnYdVI65r8YDhHpl8HRUEXAVpRvZ_UUxAAo-Tgw';
+
+ async function refreshToken() {
+  const refresh = localStorage.getItem('pa_refresh_token');
+  if (!refresh) return;
+  const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
+    body: JSON.stringify({ refresh_token: refresh })
+  });
+  const data = await res.json();
+  if (data.access_token) {
+    localStorage.setItem('pa_token', data.access_token);
+    localStorage.setItem('pa_refresh_token', data.refresh_token);
+    localStorage.setItem('pa_user', JSON.stringify(data.user));
+  } else {
+    signOut();
+  }
+}
+  // Auto-refresh token every 50 minutes
+  setInterval(refreshToken, 50 * 60 * 1000);
+ async function supaFetch(path, method, body) {
+    const res = await fetch(`${SUPA_URL}/auth/v1${path}`, {
+      method: method || 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return res.json();
+  }
+
+  function showAuth(id) {
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showApp(user) {
+    // Hide all auth screens
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    // Update greeting with user's first name
+    const firstName = user.user_metadata?.first_name || user.email.split('@')[0];
+    const banner = document.querySelector('.home-banner h3');
+    if (banner) banner.textContent = `Welcome back, ${firstName} 👋`;
+    // Show app
+    switchScreen('home');
+    loadAndDisplayTrip(user);
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    const btn = document.getElementById('login-btn');
+    errEl.classList.remove('show');
+    if (!email || !password) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Signing in...';
+    const data = await supaFetch('/token?grant_type=password', 'POST', { email, password });
+    if (data.access_token) {
+      localStorage.setItem('pa_token', data.access_token);
+      localStorage.setItem('pa_refresh_token', data.refresh_token);
+      localStorage.setItem('pa_user', JSON.stringify(data.user));
+      showApp(data.user);
+    } else {
+      errEl.textContent = data.error_description || 'Invalid email or password.';
+      errEl.classList.add('show');
+      if (trip.id) loadPackingList(trip.id);
+      window._currentTripId = trip.id;
+      if (trip.id) loadWellnessData(trip.id);
+    }
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+
+  async function handleSignup() {
+    const firstName = document.getElementById('signup-firstname').value.trim();
+    const lastName = document.getElementById('signup-lastname').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const errEl = document.getElementById('signup-error');
+    const succEl = document.getElementById('signup-success');
+    const btn = document.getElementById('signup-btn');
+    errEl.classList.remove('show'); succEl.classList.remove('show');
+    if (!firstName || !email || !password) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('show'); return; }
+    if (password.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Creating account...';
+    const data = await supaFetch('/signup', 'POST', {
+      email, password,
+      data: { first_name: firstName, last_name: lastName }
+    });
+    if (data.id || data.user) {
+      succEl.classList.add('show');
+      setTimeout(() => showAuth('auth-login'), 3000);
+    } else {
+      errEl.textContent = data.msg || data.error_description || 'Something went wrong.';
+      errEl.classList.add('show');
+    }
+    btn.disabled = false; btn.textContent = 'Create account';
+  }
+
+  async function handleForgot() {
+    const email = document.getElementById('forgot-email').value.trim();
+    const errEl = document.getElementById('forgot-error');
+    const succEl = document.getElementById('forgot-success');
+    const btn = document.getElementById('forgot-btn');
+    errEl.classList.remove('show'); succEl.classList.remove('show');
+    if (!email) { errEl.textContent = 'Please enter your email.'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Sending...';
+    await supaFetch('/recover', 'POST', { email });
+    succEl.classList.add('show');
+    btn.disabled = false; btn.textContent = 'Send reset link';
+  }
+
+  // Check if already logged in
+  const storedUser = localStorage.getItem('pa_user');
+  if (storedUser) {
+    try { showApp(JSON.parse(storedUser)); } catch(e) { showAuth('auth-login'); }
+  } else { showAuth('auth-login'); }
+  // Allow Enter key on login
+  document.getElementById('login-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+  let _locationTimer = null;
+  async function fetchDestinationPhoto(destination) {
+    try {
+      const query = destination.split(',')[0].trim();
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&orientation=landscape&per_page=1&client_id=HLzRfwKsxXDvzhUMBwytMYwDQbDoy5fUfkS05sbZI90`, { signal: controller.signal });
+      clearTimeout(timeout);
+      const data = await res.json();
+      if (data.results && data.results.length > 0) return data.results[0].urls.regular;
+    } catch(e) {
+      console.log('Photo fetch failed:', e.message);
+    }
+    return 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+    }
+  async function searchLocation(inputId, suggestionsId, latId, lonId) {
+  const input = document.getElementById(inputId);
+  const suggestions = document.getElementById(suggestionsId);
+  const query = input.value.trim();
+  clearTimeout(_locationTimer);
+  if (query.length < 3) { suggestions.style.display = 'none'; return; }
+  _locationTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`);
+      const data = await res.json();
+      if (!data.length) { suggestions.style.display = 'none'; return; }
+      suggestions.innerHTML = data.map(p => `
+        <div onclick="selectLocation('${p.display_name.replace(/'/g, '&#39;')}', ${p.lat}, ${p.lon}, '${inputId}', '${suggestionsId}', '${latId}', '${lonId}')"
+          style="padding:10px 12px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--border);">
+          ${p.display_name}
+        </div>`).join('');
+      suggestions.style.display = 'block';
+    } catch(e) { suggestions.style.display = 'none'; }
+  }, 400);
+}
+
+function selectLocation(name, lat, lon, inputId, suggestionsId, latId, lonId) {
+  document.getElementById(inputId).value = name;
+  document.getElementById(latId).value = lat;
+  document.getElementById(lonId).value = lon;
+  document.getElementById(suggestionsId).style.display = 'none';
+}
+async function saveFirstTrip() {
+  const dest = document.getElementById('first-trip-dest').value.trim();
+  const lat = document.getElementById('first-trip-lat').value || null;
+  const lon = document.getElementById('first-trip-lon').value || null;
+  const start = document.getElementById('first-trip-start').value;
+  const end = document.getElementById('first-trip-end').value;
+  const hotel = document.getElementById('first-trip-hotel').value.trim();
+  const flight = document.getElementById('first-trip-flight').value.trim();
+  const people = document.getElementById('first-trip-people').value || '1';
+  const errEl = document.getElementById('first-trip-error');
+  const btn = document.getElementById('first-trip-btn');
+  errEl.style.display = 'none';
+  if (!dest) { errEl.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Saving...';
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  const token = localStorage.getItem('pa_token');
+  await fetch(SUPA_URL + '/rest/v1/trips', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Prefer': 'return=representation' },
+    body: JSON.stringify({ user_id: user.id, destination: dest, start_date: start || null, end_date: end || null, hotel: hotel || null, flight: flight || null, lat: lat ? parseFloat(lat) : null, lon: lon ? parseFloat(lon) : null, people: parseInt(people) || 1 })
+  });
+  const savedTrip = await (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=created_at.desc&limit=1', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  })).json();
+  if (savedTrip && savedTrip[0]) createDefaultPackingList(savedTrip[0].id, user.id);
+  btn.disabled = false; btn.textContent = 'Save my trip';
+  // Show confirmation
+  const noTrip = document.getElementById('home-no-trip');
+  if (noTrip) noTrip.innerHTML = `
+    <div style="font-size:48px; margin-bottom:20px;">✅</div>
+    <h2 style="font-family:var(--font-display); font-size:24px; font-weight:600; margin-bottom:8px;">You're all set!</h2>
+    <p style="font-size:14px; color:var(--ink-mid); line-height:1.6; margin-bottom:32px;">Your trip to ${dest} has been saved. Your packing list is ready to go!</p>
+  `;
+  setTimeout(() => {
+    loadAndDisplayTrip();
+  }, 2500);
+}
+  async function loadAndDisplayTrip(user) {
+    if (!user) user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const token = localStorage.getItem('pa_token');
+    if (!user.id) return;
+    const res = await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=start_date.asc&limit=1', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + (token || SUPA_KEY) }
+    });
+    const data = await res.json();
+    if (!data || !data.length) {
+    const noTrip = document.getElementById('home-no-trip');
+    const heroWrap = document.getElementById('home-trip-hero-wrap') || document.querySelector('.trip-hero');
+    if (noTrip) { noTrip.style.display = 'flex'; }
+    if (heroWrap) { heroWrap.style.display = 'none'; }
+    return;
+    }
+    const noTrip = document.getElementById('home-no-trip');
+    if (noTrip) noTrip.style.display = 'none';
+    const mainContent = document.getElementById('home-main-content');
+    if (mainContent) mainContent.style.display = 'block';
+    const trip = data[0];
+    const dest = trip.destination || 'My Trip';
+    const dates = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) + ' – ' + new Date(trip.end_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : '';
+    const fallbackImg = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&auto=format&fit=crop';
+    fetchDestinationPhoto(dest).then(img => {
+      const bg = document.getElementById('home-trip-bg');
+      const tbg = document.getElementById('trips-hero-bg');
+      if (bg) bg.style.backgroundImage = "url('" + (img || fallbackImg) + "')";
+      if (tbg) tbg.style.backgroundImage = "url('" + (img || fallbackImg) + "')";
+    }).catch(() => {
+      const bg = document.getElementById('home-trip-bg');
+      const tbg = document.getElementById('trips-hero-bg');
+      if (tbg) tbg.style.backgroundImage = "url('" + fallbackImg + "')";
+    });
+    const img = fallbackImg;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('home-trip-name', dest);
+    set('home-trip-dates', dates);
+    set('home-trip-flight', trip.flight || '—');
+    set('home-trip-hotel', trip.hotel || '—');
+    set('home-trip-people', trip.people || '1');
+    set('weather-section-title', dest.split(',')[0] + ' weather');
+    const bg = document.getElementById('home-trip-bg');
+    set('trips-destination', dest);
+    set('trips-dates', dates);
+    set('trips-flight', trip.flight || '—');
+    set('trips-hotel', trip.hotel || '—');
+    set('trips-transfer', trip.transfer || '—');
+    set('strip-trip-name', dest);
+    set('strip-trip-dates', dates);
+    TRIP.name = dest;
+    TRIP.lat = trip.lat || null;
+    TRIP.lon = trip.lon || null;
+    TRIP.startDate = trip.start_date ? new Date(trip.start_date) : new Date();
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const tripStart = new Date(trip.start_date);
+    tripStart.setHours(0,0,0,0);
+    const daysUntil = Math.ceil((tripStart - today) / (1000 * 60 * 60 * 24));
+    const countdownEl = document.getElementById('home-countdown');
+    if (countdownEl) {
+      if (daysUntil > 0) countdownEl.textContent = `Your next trip is in ${daysUntil} days — let's get packing!`;
+      else if (daysUntil === 0) countdownEl.textContent = `Your trip starts today — enjoy! ✈️`;
+      else countdownEl.textContent = `You're currently on your trip — enjoy! 🌍`;
+    }
+    TRIP.endDate = trip.end_date ? new Date(trip.end_date) : new Date();
+   fetchWeather();
+    if (trip.id) loadPackingList(trip.id);
+    window._currentTripId = trip.id;
+    if (trip.id) loadWellnessData(trip.id);
+    loadProfiles();
+  }
+  // Add sign out to settings
+
+
+  async function saveTrip() {
+    const destination = document.getElementById('modal-trip-dest').value.trim();
+    const lat = document.getElementById('modal-trip-lat').value || null;
+    const lon = document.getElementById('modal-trip-lon').value || null;
+    const departure = document.querySelectorAll('#modal-add-trip input[type="date"]')[0]?.value;
+    const returnDate = document.querySelectorAll('#modal-add-trip input[type="date"]')[1]?.value;
+    const flight = document.querySelector('#modal-add-trip input[placeholder="e.g. BA234"]').value.trim();
+    const hotel = document.querySelector('#modal-add-trip input[placeholder="Hotel name"]').value.trim();
+    const transfer = document.querySelector('#modal-add-trip input[placeholder="Reference or details"]').value.trim();
+    if (!destination) { closeModalById('modal-add-trip'); return; }
+    const btn = document.querySelector('#modal-add-trip .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const token = localStorage.getItem('pa_token');
+    await fetch(SUPA_URL + '/rest/v1/trips', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + (token || SUPA_KEY),
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        destination: destination,
+        start_date: departure || null,
+        end_date: returnDate || null,
+        flight: flight || null,
+        hotel: hotel || null,
+        transfer: transfer || null,
+        lat: lat ? parseFloat(lat) : null,
+        lon: lon ? parseFloat(lon) : null,
+        people: parseInt(document.getElementById('modal-trip-people')?.value) || 1
+      })
+    });
+    if (btn) { btn.disabled = false; btn.textContent = 'Save trip'; }
+    closeModalById('modal-add-trip');
+    const savedTrip = await (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=created_at.desc&limit=1', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+    })).json();
+    if (savedTrip && savedTrip[0]) createDefaultPackingList(savedTrip[0].id, user.id);
+    loadAndDisplayTrip();
+    alert('Trip saved! 🎉');
+  }
+    function signOut() {
+    localStorage.removeItem('pa_token');
+    localStorage.removeItem('pa_refresh_token');
+    localStorage.removeItem('pa_user');
+    showAuth('auth-login');
+    closeModalById('modal-settings');
+  }
+  const TRIP = {
+    name: '',
+    lat: null,
+    lon: null,
+    startDate: new Date(),
+    endDate: new Date()
+  };
+
+
+  const WMO = {
+    0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
+    45:'🌫️', 48:'🌫️',
+    51:'🌦️', 53:'🌦️', 55:'🌧️',
+    61:'🌧️', 63:'🌧️', 65:'🌧️',
+    71:'🌨️', 73:'🌨️', 75:'🌨️',
+    80:'🌦️', 81:'🌧️', 82:'⛈️',
+    95:'⛈️', 96:'⛈️', 99:'⛈️'
+  };
+
+  // Climate averages by month for Barcelona (0=Jan ... 11=Dec)
+  const BARCELONA_CLIMATE = [
+    { high: 13, low: 6,  rain: 5,  sun: 5,  advice: 'Cool and mild. Pack layers, a light jacket and an umbrella.' },
+    { high: 14, low: 7,  rain: 4,  sun: 6,  advice: 'Still cool. Jeans, light jumper and a waterproof layer.' },
+    { high: 17, low: 9,  rain: 5,  sun: 6,  advice: 'Mild spring weather. Light layers and a jacket for evenings.' },
+    { high: 20, low: 12, rain: 6,  sun: 7,  advice: 'Warm days, cool evenings. Mix of light clothes and a cardigan.' },
+    { high: 24, low: 16, rain: 5,  sun: 8,  advice: 'Warm and pleasant. Light summer clothes, sunscreen essential.' },
+    { high: 28, low: 20, rain: 3,  sun: 9,  advice: 'Hot and sunny. Breathable fabrics, sunscreen SPF50, sunglasses.' },
+    { high: 31, low: 23, rain: 2,  sun: 10, advice: 'Peak summer heat. Light cotton, swimwear, sun hat, SPF50 a must.' },
+    { high: 31, low: 23, rain: 3,  sun: 9,  advice: 'Very hot. Same as July — pack light, breathable and UV protection.' },
+    { high: 27, low: 20, rain: 5,  sun: 7,  advice: 'Warm but cooler evenings. Add a light layer for after sunset.' },
+    { high: 22, low: 16, rain: 7,  sun: 6,  advice: 'Mild autumn. A mix of T-shirts and a waterproof jacket.' },
+    { high: 17, low: 11, rain: 6,  sun: 5,  advice: 'Cooler and wetter. Layers, waterproof jacket recommended.' },
+    { high: 14, low: 7,  rain: 5,  sun: 4,  advice: 'Cool winter. Warm coat, scarf and layers for sightseeing.' }
+  ];
+
+  const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  async function fetchWeather() {
+    const today = new Date();
+    const tripStart = TRIP.startDate;
+    const daysUntilTrip = Math.ceil((tripStart - today) / (1000 * 60 * 60 * 24));
+    const tripMonth = tripStart.getMonth();
+    const climate = BARCELONA_CLIMATE[tripMonth];
+    const monthName = tripStart.toLocaleString('default', { month: 'long' });
+    document.getElementById('clim-label').textContent = monthName + ' in ' + TRIP.name + ' — typical climate';
+
+    // Always show climate summary
+    document.getElementById('weather-climate-card').style.display = 'block';
+    document.getElementById('clim-high').textContent = climate.high + '°';
+    document.getElementById('clim-low').textContent = climate.low + '°';
+    document.getElementById('clim-rain').textContent = climate.rain;
+    document.getElementById('clim-sun').textContent = climate.sun + 'h';
+    document.getElementById('clim-advice').textContent = climate.advice;
+
+    // Show packing tip
+    document.getElementById('weather-pack-tip').style.display = 'block';
+    document.getElementById('pack-tip-text').textContent = `Based on ${monthName} averages: ${climate.advice}`;
+
+    // If trip is within 16 days, fetch real forecast
+    if (daysUntilTrip <= 16 && daysUntilTrip >= 0) {
+      document.getElementById('weather-label').textContent = 'Trip forecast';
+      try {
+        const endStr = TRIP.endDate.toISOString().split('T')[0];
+        const startStr = TRIP.startDate.toISOString().split('T')[0];
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.lat}&longitude=${TRIP.lon}&daily=weathercode,temperature_2m_max&timezone=auto&start_date=${startStr}&end_date=${endStr}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        renderStrip(data.daily.time, data.daily.weathercode, data.daily.temperature_2m_max, true);
+      } catch(e) {
+        renderFallbackStrip();
+      }
+    } else if (daysUntilTrip < 0) {
+      // Trip in the past or happening now
+      document.getElementById('weather-label').textContent = 'Live forecast';
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.lat}&longitude=${TRIP.lon}&daily=weathercode,temperature_2m_max&timezone=auto&forecast_days=7`;
+        const res = await fetch(url);
+        const data = await res.json();
+        renderStrip(data.daily.time, data.daily.weathercode, data.daily.temperature_2m_max, false);
+      } catch(e) {
+        renderFallbackStrip();
+      }
+    } else {
+      // Trip is far away — show climate strip instead of forecast
+      document.getElementById('weather-label').textContent = `${Math.abs(daysUntilTrip)} days until trip`;
+      renderClimateStrip(tripStart, climate);
+    }
+  }
+
+  function renderStrip(times, codes, temps, isTripForecast) {
+    const strip = document.getElementById('weather-strip');
+    strip.innerHTML = '';
+    times.forEach((dateStr, i) => {
+      const d = new Date(dateStr);
+      const label = isTripForecast
+        ? (i === 0 ? 'Day 1' : 'Day ' + (i + 1))
+        : (i === 0 ? 'Today' : DAYS_SHORT[d.getDay()]);
+      const emoji = WMO[codes[i]] || '🌡️';
+      const temp = Math.round(temps[i]);
+      const el = document.createElement('div');
+      el.className = 'weather-day' + (i === 0 ? ' today' : '');
+      el.innerHTML = `<div class="wd">${label}</div><div class="wi">${emoji}</div><div class="wt">${temp}°</div>`;
+      strip.appendChild(el);
+    });
+    updateOutfitWeather(times, codes, temps);
+  }
+
+  function renderClimateStrip(tripStart, climate) {
+    // Show a typical week strip based on climate averages with slight variation
+    const strip = document.getElementById('weather-strip');
+    strip.innerHTML = '';
+    const variation = [0, 1, -1, 2, 0, -2, 1];
+    const icons = ['☀️','🌤️','☀️','⛅','☀️','🌤️','☀️'];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(tripStart);
+      d.setDate(d.getDate() + i);
+      const label = i === 0 ? 'Day 1' : 'Day ' + (i + 1);
+      const temp = climate.high + variation[i];
+      const el = document.createElement('div');
+      el.className = 'weather-day' + (i === 0 ? ' today' : '');
+      el.innerHTML = `<div class="wd">${label}</div><div class="wi">${icons[i]}</div><div class="wt">~${temp}°</div>`;
+      strip.appendChild(el);
+    }
+  }
+
+  function renderFallbackStrip() {
+    document.getElementById('weather-strip').innerHTML = `
+      <div class="weather-day today"><div class="wd">Day 1</div><div class="wi">☀️</div><div class="wt">31°</div></div>
+      <div class="weather-day"><div class="wd">Day 2</div><div class="wi">☀️</div><div class="wt">30°</div></div>
+      <div class="weather-day"><div class="wd">Day 3</div><div class="wi">🌤️</div><div class="wt">29°</div></div>
+      <div class="weather-day"><div class="wd">Day 4</div><div class="wi">☀️</div><div class="wt">31°</div></div>
+      <div class="weather-day"><div class="wd">Day 5</div><div class="wi">⛅</div><div class="wt">28°</div></div>
+      <div class="weather-day"><div class="wd">Day 6</div><div class="wi">☀️</div><div class="wt">30°</div></div>
+      <div class="weather-day"><div class="wd">Day 7</div><div class="wi">☀️</div><div class="wt">31°</div></div>`;
+  }
+
+  function updateOutfitWeather(times, codes, temps) {
+    const pills = document.querySelectorAll('.tl-weather-pill');
+    pills.forEach((pill, i) => {
+      if (times && times[i]) {
+        const emoji = WMO[codes[i]] || '🌡️';
+        const temp = Math.round(temps[i]);
+        pill.textContent = `${emoji} ${temp}°`;
+      }
+    });
+  }
+
+  fetchWeather();
+  function fixScreenLayout() {
+    const app = document.getElementById('app');
+    const nav = document.querySelector('.bottom-nav');
+    // Move nav back to app first
+    if (nav && nav.parentElement !== app) app.appendChild(nav);
+    // Move screens before nav
+    ['screen-home','screen-trips','screen-outfits','screen-wellness','screen-profiles'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.parentElement !== app) app.insertBefore(el, nav);
+    });
+    // Move weather block back inside home-main-content if leaked
+    const weatherBlock = document.getElementById('weather-forecast-block');
+    const homeMain = document.getElementById('home-main-content');
+    if (weatherBlock && homeMain && weatherBlock.parentElement !== homeMain) homeMain.appendChild(weatherBlock);
+    // Move modals and auth screens to app
+    ['modal-add-trip','modal-add-item','modal-add-outfit','modal-add-med','modal-add-allergy','modal-add-profile','modal-add-emergency','modal-reminder','modal-predeparture','modal-settings','auth-login','auth-signup','auth-forgot'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.parentElement !== app) app.appendChild(el);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', fixScreenLayout);
+  fixScreenLayout();
+  function switchScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    const navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+  async function loadProfiles() {
+  const token = localStorage.getItem('pa_token');
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  if (!user.id) return;
+
+  // Load profiles
+  const res = await fetch(SUPA_URL + '/rest/v1/profiles?user_id=eq.' + user.id + '&order=sort_order.asc', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  const profiles = await res.json();
+  const container = document.getElementById('profiles-container');
+  if (!profiles || !profiles.length) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No family members added yet.</div>';
+  } else {
+    container.innerHTML = profiles.map(p => `
+      <div class="profile-card">
+        <div class="profile-avatar">${p.first_name?.charAt(0) || '?'}</div>
+        <div class="profile-info">
+          <div class="name">${p.first_name} ${p.last_name || ''}</div>
+          <div class="sub">${p.type || 'Adult'}</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('');
+  }
+
+  // Load emergency contact
+  const tripId = window._currentTripId;
+  const ecContainer = document.getElementById('emergency-container');
+  if (!tripId) { ecContainer.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">Save a trip first to add emergency contacts.</div>'; return; }
+  const ecRes = await fetch(SUPA_URL + '/rest/v1/emergency_contacts?trip_id=eq.' + tripId + '&limit=1', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+  });
+  const ecs = await ecRes.json();
+  if (!ecs || !ecs.length) {
+    ecContainer.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No emergency contact added yet.</div>';
+  } else {
+    const ec = ecs[0];
+    ecContainer.innerHTML = `<div class="card" style="margin:0 16px 10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:500;">${ec.name}</div>
+          <div style="font-size:13px;color:var(--ink-light);margin-top:2px;">${ec.phone || ''}${ec.notes ? ' · ' + ec.notes : ''}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+async function saveProfile() {
+  const name = document.getElementById('profile-name').value.trim();
+  const type = document.getElementById('profile-type').value;
+  if (!name) return;
+  const token = localStorage.getItem('pa_token');
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  const nameParts = name.split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(' ') || '';
+  await fetch(SUPA_URL + '/rest/v1/profiles', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ user_id: user.id, first_name: firstName, last_name: lastName, type })
+  });
+  document.getElementById('profile-name').value = '';
+  closeModalById('modal-add-profile');
+  loadProfiles();
+}
+
+async function saveEmergencyContact() {
+  const name = document.getElementById('emergency-name').value.trim();
+  const phone = document.getElementById('emergency-phone').value.trim();
+  const notes = document.getElementById('emergency-notes').value.trim();
+  if (!name) return;
+  const token = localStorage.getItem('pa_token');
+  const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+  const tripId = window._currentTripId;
+  await fetch(SUPA_URL + '/rest/v1/emergency_contacts', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ trip_id: tripId, user_id: user.id, name, phone: phone || null, notes: notes || null })
+  });
+  document.getElementById('emergency-name').value = '';
+  document.getElementById('emergency-phone').value = '';
+  document.getElementById('emergency-notes').value = '';
+  closeModalById('modal-add-emergency');
+  loadProfiles();
+}
+  async function loadWellnessData(tripId) {
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    if (!tripId) return;
+
+    // Set trip start date
+    const tripStart = TRIP.startDate;
+    const dateEl = document.getElementById('wellness-trip-date');
+    if (dateEl && tripStart) dateEl.textContent = tripStart.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+
+    // Load medications
+    const medRes = await fetch(SUPA_URL + '/rest/v1/medications?trip_id=eq.' + tripId + '&order=sort_order.asc&select=*,profile:profiles(first_name,last_name)', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const meds = await medRes.json();
+    renderMedications(meds);
+
+    // Load allergies
+    const allergyRes = await fetch(SUPA_URL + '/rest/v1/allergy_notes?trip_id=eq.' + tripId + '&order=created_at.asc', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const allergies = await allergyRes.json();
+    renderAllergies(allergies);
+  }
+
+  function renderMedications(meds) {
+    const container = document.getElementById('medications-container');
+    if (!meds || !meds.length) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No medications added yet.</div>';
+      return;
+    }
+    const freqLabels = { 'AM': ['AM'], 'PM': ['PM'], 'AM+PM': ['AM', 'PM'], 'AM+PM+EVE': ['AM', 'PM', 'EVE'], 'needed': ['Take'], 'food': ['With food'] };
+    container.innerHTML = meds.map(med => {
+      const pills = (freqLabels[med.frequency] || ['Take']).map(label =>
+        `<button class="time-pill" onclick="togglePill(this, '${med.id}', '${label}')">${label}</button>`
+      ).join('');
+      return `<div class="med-row">
+        <div class="med-info">
+          <div class="name">${med.name}</div>
+          <div class="dose">${med.dose || ''}${med.profile ? ' · ' + med.profile.first_name : ''}</div>
+        </div>
+        <div class="med-toggle">${pills}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderAllergies(allergies) {
+    const container = document.getElementById('allergies-container');
+    if (!allergies || !allergies.length) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ink-light);font-size:14px;">No allergy notes added yet.</div>';
+      return;
+    }
+    container.innerHTML = allergies.map(a => `
+      <div class="card" style="margin:0 16px 10px;">
+        <div style="display:flex;align-items:start;gap:12px;">
+          <div style="width:36px;height:36px;background:#fdecea;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a33030" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:500;margin-bottom:4px;">${a.person_name ? a.person_name + ' — ' : ''}${a.allergy}</div>
+            <div style="font-size:13px;color:var(--ink-light);line-height:1.5;">${a.notes || ''}</div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  async function saveMedication() {
+    const name = document.getElementById('med-name').value.trim();
+    const dose = document.getElementById('med-dose').value.trim();
+    const frequency = document.getElementById('med-frequency').value;
+    if (!name) return;
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const tripId = window._currentTripId || (await fetch(SUPA_URL + '/rest/v1/trips?user_id=eq.' + user.id + '&order=start_date.asc&limit=1', { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token } }).then(r => r.json()).then(d => d[0]?.id));
+    window._currentTripId = tripId;
+    await fetch(SUPA_URL + '/rest/v1/medications', {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ trip_id: tripId, user_id: user.id, name, dose, frequency, profile_id: document.getElementById('med-profile')?.value || null })
+    });
+    document.getElementById('med-name').value = '';
+    document.getElementById('med-dose').value = '';
+    closeModalById('modal-add-med');
+    loadWellnessData(tripId);
+  }
+
+  async function saveAllergy() {
+    const person = document.getElementById('allergy-person').value.trim();
+    const allergy = document.getElementById('allergy-name').value.trim();
+    const notes = document.getElementById('allergy-notes').value.trim();
+    if (!allergy) return;
+    const token = localStorage.getItem('pa_token');
+    const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+    const tripId = window._currentTripId;
+    await fetch(SUPA_URL + '/rest/v1/allergy_notes', {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ trip_id: tripId, user_id: user.id, person_name: person || null, allergy, notes: notes || null })
+    });
+    document.getElementById('allergy-person').value = '';
+    document.getElementById('allergy-name').value = '';
+    document.getElementById('allergy-notes').value = '';
+    closeModalById('modal-add-allergy');
+    loadWellnessData(tripId);
+  }
+  function togglePill(btn) {
+    btn.classList.toggle('taken');
+  }
+
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    if (id === 'modal-add-med') {
+      const token = localStorage.getItem('pa_token');
+      const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+      const sel = document.getElementById('med-profile');
+      if (!sel || !user.id) return;
+      fetch(SUPA_URL + '/rest/v1/profiles?user_id=eq.' + user.id + '&order=sort_order.asc', {
+        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + token }
+      }).then(r => r.json()).then(profiles => {
+        sel.innerHTML = '<option value="">Not assigned</option>' +
+          profiles.map(p => `<option value="${p.id}">${p.first_name}${p.last_name ? ' ' + p.last_name : ''}</option>`).join('');
+      });
+    }
+  }
+
+  function closeModal(event, id) {
+    if (event.target === document.getElementById(id)) {
+      document.getElementById(id).classList.remove('open');
+    }
+  }
+
+  function closeModalById(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+</script>
+</body>
+</html>
